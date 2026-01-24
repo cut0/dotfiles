@@ -1,0 +1,37 @@
+[user]
+	name = cut0
+	email = zeron9421@gmail.com
+
+[init]
+	defaultBranch = main
+
+[push]
+	autoSetupRemote = true
+
+[pull]
+	rebase = true
+
+[fetch]
+	prune = true
+
+[core]
+	editor = nvim
+	quotepath = false
+
+[diff]
+	colorMoved = default
+
+[merge]
+	conflictstyle = diff3
+
+[alias]
+	co = checkout
+	st = status
+	br = branch
+	cm = commit
+	sw = switch
+	lg = log --oneline --graph --decorate
+	unstage = reset HEAD --
+	last = log -1 HEAD
+	branches = branch -a
+	remotes = remote -v
