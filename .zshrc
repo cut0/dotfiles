@@ -69,7 +69,12 @@ eval "$(mise activate zsh)"
 # ====================
 nvim() {
   if [[ -n "$WEZTERM_PANE" ]]; then
-    /Applications/WezTerm.app/Contents/MacOS/wezterm cli spawn --cwd "$(pwd)" -- nvim "$@"
+    local project_name="${PWD##*/}"
+    local pane_id
+    pane_id=$(/Applications/WezTerm.app/Contents/MacOS/wezterm cli spawn --cwd "$(pwd)" -- nvim "$@")
+    if [[ -n "$pane_id" ]]; then
+      /Applications/WezTerm.app/Contents/MacOS/wezterm cli set-tab-title --pane-id "$pane_id" "$project_name"
+    fi
   else
     command nvim "$@"
   fi

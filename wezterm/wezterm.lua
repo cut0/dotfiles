@@ -9,7 +9,10 @@ local appearance = require("appearance")
 --------------------------------------------------------------------------------
 
 wezterm.on("format-tab-title", function(tab)
-  local title = tab.active_pane.title
+  local title = tab.tab_title
+  if not title or #title == 0 then
+    title = tab.active_pane.title
+  end
   return "  " .. title .. "  "
 end)
 
