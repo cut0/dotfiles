@@ -20,6 +20,8 @@ opt.signcolumn = "yes"
 
 opt.termguicolors = true
 
+opt.cursorline = true
+
 opt.completeopt = { "menu", "menuone", "noselect" }
 
 opt.pumheight = 10

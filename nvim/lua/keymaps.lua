@@ -67,16 +67,93 @@ end, { noremap = true, silent = true, desc = "Toggle word wrap" })
 
 keymap("n", "<M-b>", "<cmd>NvimTreeToggle<CR>", { noremap = true, silent = true, desc = "Toggle file tree" })
 keymap("n", "<M-e>", "<cmd>NvimTreeFocus<CR>", { noremap = true, silent = true, desc = "Focus file tree" })
-keymap("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", { noremap = true, silent = true, desc = "Toggle file tree" })
-keymap("n", "<leader>b", "<cmd>NvimTreeFocus<CR>", { noremap = true, silent = true, desc = "Focus file tree" })
 
 --------------------------------------------------------------------------------
 -- Search (Telescope)
 --------------------------------------------------------------------------------
 
+-- 検索フィルタの状態を保存するファイル
+local filter_cache_file = vim.fn.stdpath("data") .. "/search_filters.json"
+
+-- フィルタ状態を読み込み
+local function load_filters()
+  local file = io.open(filter_cache_file, "r")
+  if file then
+    local content = file:read("*a")
+    file:close()
+    local ok, data = pcall(vim.json.decode, content)
+    if ok and data then
+      return data
+    end
+  end
+  return { include = "", exclude = "" }
+end
+
+-- フィルタ状態を保存
+local function save_filters(filters)
+  local file = io.open(filter_cache_file, "w")
+  if file then
+    file:write(vim.json.encode(filters))
+    file:close()
+  end
+end
+
+-- 詳細検索: Cmd+Shift+G
+local function live_grep_with_filters()
+  local filters = load_filters()
+
+  vim.ui.input({
+    prompt = "Include (glob): ",
+    default = filters.include,
+  }, function(include)
+    if include == nil then return end
+
+    vim.ui.input({
+      prompt = "Exclude (glob): ",
+      default = filters.exclude,
+    }, function(exclude)
+      if exclude == nil then return end
+
+      -- フィルタを保存
+      save_filters({ include = include, exclude = exclude })
+
+      local args = { "--hidden" }
+
+      -- include パターンを追加
+      if include ~= "" then
+        for pattern in include:gmatch("[^,]+") do
+          pattern = vim.trim(pattern)
+          if pattern ~= "" then
+            table.insert(args, "--glob")
+            table.insert(args, pattern)
+          end
+        end
+      end
+
+      -- exclude パターンを追加
+      if exclude ~= "" then
+        for pattern in exclude:gmatch("[^,]+") do
+          pattern = vim.trim(pattern)
+          if pattern ~= "" then
+            table.insert(args, "--glob")
+            table.insert(args, "!" .. pattern)
+          end
+        end
+      end
+
+      require("telescope.builtin").live_grep({
+        prompt_title = "Search in Files",
+        additional_args = function() return args end,
+      })
+    end)
+  end)
+end
+
 keymap("n", "<M-f>", function()
   require("telescope.builtin").live_grep()
 end, { noremap = true, silent = true, desc = "Search in project" })
+
+keymap("n", "<M-G>", live_grep_with_filters, { noremap = true, silent = true, desc = "Search with filters" })
 
 keymap("n", "<M-p>", function()
   require("telescope.builtin").find_files()
@@ -86,14 +163,24 @@ keymap("n", "<M-P>", function()
   require("telescope.builtin").commands()
 end, { noremap = true, silent = true, desc = "Command palette" })
 
-keymap("n", "<leader>ff", function() require("telescope.builtin").find_files() end, { noremap = true, silent = true, desc = "Find files" })
-keymap("n", "<leader>fg", function() require("telescope.builtin").live_grep() end, { noremap = true, silent = true, desc = "Live grep" })
-keymap("n", "<leader>fb", function() require("telescope.builtin").buffers() end, { noremap = true, silent = true, desc = "Find buffers" })
-keymap("n", "<leader>fh", function() require("telescope.builtin").help_tags() end, { noremap = true, silent = true, desc = "Help tags" })
-keymap("n", "<leader>fc", function() require("telescope.builtin").commands() end, { noremap = true, silent = true, desc = "Commands" })
-keymap("n", "<leader>fr", function() require("telescope.builtin").oldfiles() end, { noremap = true, silent = true, desc = "Recent files" })
-keymap("n", "<leader>fs", function() require("telescope.builtin").lsp_document_symbols() end, { noremap = true, silent = true, desc = "Document symbols" })
-keymap("n", "<leader>fS", function() require("telescope.builtin").lsp_workspace_symbols() end, { noremap = true, silent = true, desc = "Workspace symbols" })
+keymap("n", "<leader>ff", function() require("telescope.builtin").find_files() end,
+  { noremap = true, silent = true, desc = "Find files" })
+keymap("n", "<leader>fg", function() require("telescope.builtin").live_grep() end,
+  { noremap = true, silent = true, desc = "Live grep" })
+keymap("n", "<leader>fG", live_grep_with_filters,
+  { noremap = true, silent = true, desc = "Live grep (with filters)" })
+keymap("n", "<leader>fb", function() require("telescope.builtin").buffers() end,
+  { noremap = true, silent = true, desc = "Find buffers" })
+keymap("n", "<leader>fh", function() require("telescope.builtin").help_tags() end,
+  { noremap = true, silent = true, desc = "Help tags" })
+keymap("n", "<leader>fc", function() require("telescope.builtin").commands() end,
+  { noremap = true, silent = true, desc = "Commands" })
+keymap("n", "<leader>fr", function() require("telescope.builtin").oldfiles() end,
+  { noremap = true, silent = true, desc = "Recent files" })
+keymap("n", "<leader>fs", function() require("telescope.builtin").lsp_document_symbols() end,
+  { noremap = true, silent = true, desc = "Document symbols" })
+keymap("n", "<leader>fS", function() require("telescope.builtin").lsp_workspace_symbols() end,
+  { noremap = true, silent = true, desc = "Workspace symbols" })
 
 --------------------------------------------------------------------------------
 -- Window Management
@@ -122,7 +209,8 @@ end
 
 -- Cmd+数字 でウィンドウ切り替え
 for i = 1, 9 do
-  keymap("n", "<M-" .. i .. ">", function() goto_editor_window(i) end, { noremap = true, silent = true, desc = "Go to editor window " .. i })
+  keymap("n", "<M-" .. i .. ">", function() goto_editor_window(i) end,
+    { noremap = true, silent = true, desc = "Go to editor window " .. i })
 end
 
 -- 新しいエディタウィンドウを追加 (Cmd+\)
@@ -148,27 +236,20 @@ keymap("n", "<M-w>", function()
   end
 end, { noremap = true, silent = true, desc = "Close current buffer" })
 
--- 全バッファを閉じる (Cmd+Q)
-keymap("n", "<M-q>", function()
-  local bufs = vim.fn.getbufinfo({ buflisted = 1 })
-  for _, buf in ipairs(bufs) do
-    require("mini.bufremove").delete(buf.bufnr, false)
-  end
-  vim.cmd("only")
-end, { noremap = true, silent = true, desc = "Close all buffers" })
+-- Neovim を終了 (Cmd+Q)
+keymap("n", "<M-q>", "<cmd>qa<CR>", { noremap = true, silent = true, desc = "Quit Neovim" })
 
--- 垂直分割
-keymap("n", "<leader>L", "<cmd>vsplit<CR>", { noremap = true, silent = true, desc = "Split window vertically" })
+-- 全ウィンドウを閉じる (Cmd+Shift+W)
+keymap("n", "<M-S-w>", function()
+  vim.cmd("only")
+  vim.cmd("enew")
+end, { noremap = true, silent = true, desc = "Close all windows" })
 
 -- ウィンドウリサイズ (Ctrl+Shift+Arrow)
-keymap("n", "<C-S-Right>", "<cmd>vertical resize +5<CR>", { noremap = true, silent = true, desc = "Increase window width" })
-keymap("n", "<C-S-Left>", "<cmd>vertical resize -5<CR>", { noremap = true, silent = true, desc = "Decrease window width" })
-
--- ウィンドウ間移動
-keymap("n", "<leader>h", "<C-w>h", { noremap = true, silent = true, desc = "Move to left window" })
-keymap("n", "<leader>l", "<C-w>l", { noremap = true, silent = true, desc = "Move to right window" })
-keymap("n", "<leader>j", "<C-w>j", { noremap = true, silent = true, desc = "Move to below window" })
-keymap("n", "<leader>k", "<C-w>k", { noremap = true, silent = true, desc = "Move to above window" })
+keymap("n", "<C-S-Right>", "<cmd>vertical resize +5<CR>",
+  { noremap = true, silent = true, desc = "Increase window width" })
+keymap("n", "<C-S-Left>", "<cmd>vertical resize -5<CR>",
+  { noremap = true, silent = true, desc = "Decrease window width" })
 
 --------------------------------------------------------------------------------
 -- Terminal
@@ -181,7 +262,3 @@ end, { noremap = true, silent = true, desc = "Toggle fullscreen terminal" })
 keymap("t", "<M-m>", function()
   _G.toggle_fullscreen_terminal()
 end, { noremap = true, silent = true, desc = "Toggle fullscreen terminal" })
-
-keymap("n", "<leader>t", function() _G.toggle_terminal() end, { noremap = true, silent = true, desc = "Toggle terminal" })
-keymap("n", "<leader>T", function() _G.toggle_fullscreen_terminal() end, { noremap = true, silent = true, desc = "Toggle fullscreen terminal" })
-

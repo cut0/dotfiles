@@ -18,95 +18,104 @@ return {
       local telescope = require("telescope")
       local actions = require("telescope.actions")
 
+      --------------------------------------------------------------------------
+      -- Search Patterns Configuration (VSCode-like)
+      --------------------------------------------------------------------------
+
+      -- 検索から除外するパターン (glob pattern)
+      local exclude_patterns = {
+        -- Dependencies
+        "node_modules",
+        "vendor",
+        ".venv",
+        "__pycache__",
+
+        -- Version Control
+        ".git/",
+
+        -- Build outputs
+        "dist",
+        "build",
+        "out",
+        "target",
+
+        -- Lock files
+        "%.lock",
+        "package%-lock%.json",
+
+        -- Cache & temp
+        ".cache",
+        ".next",
+        ".nuxt",
+        "%.tmp",
+
+        -- Binary & media (by extension)
+        "%.png",
+        "%.jpg",
+        "%.jpeg",
+        "%.gif",
+        "%.ico",
+        "%.pdf",
+        "%.woff",
+        "%.woff2",
+        "%.ttf",
+      }
+
+      -- 検索に含めるパターン (live_grep 用, glob pattern)
+      -- 空の場合は全ファイルが対象
+      local include_patterns = {
+        -- "*.lua",
+        -- "*.ts",
+        -- "*.tsx",
+        -- "*.js",
+        -- "*.jsx",
+        -- "*.go",
+        -- "*.rs",
+        -- "*.py",
+        -- "*.md",
+      }
+
+      --------------------------------------------------------------------------
+      -- Telescope Setup
+      --------------------------------------------------------------------------
+
       telescope.setup({
         defaults = {
-          prompt_prefix = " ",
-          selection_caret = " ",
-          path_display = { "truncate" },
           sorting_strategy = "ascending",
           layout_config = {
             horizontal = {
               prompt_position = "top",
-              preview_width = 0.55,
             },
-            vertical = {
-              mirror = false,
-            },
-            width = 0.87,
-            height = 0.80,
-            preview_cutoff = 120,
           },
+          path_display = { "truncate" },
+          color_devicons = true,
           mappings = {
             i = {
-              ["<C-n>"] = actions.cycle_history_next,
-              ["<C-p>"] = actions.cycle_history_prev,
               ["<C-j>"] = actions.move_selection_next,
               ["<C-k>"] = actions.move_selection_previous,
-              ["<C-c>"] = actions.close,
-              ["<CR>"] = actions.select_default,
-              ["<C-x>"] = actions.select_horizontal,
-              ["<C-v>"] = actions.select_vertical,
-              ["<C-t>"] = actions.select_tab,
-              ["<C-u>"] = actions.preview_scrolling_up,
-              ["<C-d>"] = actions.preview_scrolling_down,
-            },
-            n = {
-              ["<Esc>"] = actions.close,
-              ["<CR>"] = actions.select_default,
-              ["j"] = actions.move_selection_next,
-              ["k"] = actions.move_selection_previous,
-              ["q"] = actions.close,
             },
           },
+          file_ignore_patterns = exclude_patterns,
         },
         pickers = {
           find_files = {
             hidden = true,
-            file_ignore_patterns = { "node_modules", ".git/", "%.lock" },
           },
           live_grep = {
             additional_args = function()
-              return { "--hidden" }
+              local args = { "--hidden" }
+              -- include_patterns が設定されている場合は glob を追加
+              for _, pattern in ipairs(include_patterns) do
+                table.insert(args, "--glob")
+                table.insert(args, pattern)
+              end
+              return args
             end,
-            file_ignore_patterns = { "node_modules", ".git/", "%.lock" },
           },
-          buffers = {
-            show_all_buffers = true,
-            sort_lastused = true,
-            mappings = {
-              i = {
-                ["<C-d>"] = actions.delete_buffer,
-              },
-            },
-          },
-          lsp_references = {
-            show_line = false,
-            path_display = { "smart" },
-            fname_width = 50,
-          },
-          lsp_definitions = {
-            show_line = false,
-            path_display = { "smart" },
-            fname_width = 50,
-          },
-          lsp_type_definitions = {
-            show_line = false,
-            path_display = { "smart" },
-            fname_width = 50,
-          },
-          lsp_implementations = {
-            show_line = false,
-            path_display = { "smart" },
-            fname_width = 50,
-          },
-          lsp_document_symbols = {
-            show_line = false,
-          },
-          lsp_workspace_symbols = {
-            show_line = false,
-            path_display = { "smart" },
-            fname_width = 50,
-          },
+          lsp_references = { show_line = false },
+          lsp_definitions = { show_line = false },
+          lsp_type_definitions = { show_line = false },
+          lsp_implementations = { show_line = false },
         },
         extensions = {
           fzf = {

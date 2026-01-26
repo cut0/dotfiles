@@ -71,10 +71,12 @@ local nvim_keys = {
   -- Window Management
   conditional_key("\\", "SUPER", send_key_to_nvim("\\", "ALT"), act.SplitHorizontal({ domain = "CurrentPaneDomain" })),
   conditional_key("w", "SUPER", send_key_to_nvim("w", "ALT"), act.CloseCurrentPane({ confirm = true })),
+  conditional_key("w", "SUPER|SHIFT", send_key_to_nvim("w", "ALT|SHIFT"), nil),
   conditional_key("q", "SUPER", send_key_to_nvim("q", "ALT"), act.QuitApplication),
 
   -- Search
   conditional_key("f", "SUPER|SHIFT", send_key_to_nvim("f", "ALT"), nil),
+  conditional_key("g", "SUPER|SHIFT", send_key_to_nvim("G", "ALT"), nil),
   conditional_key("p", "SUPER", send_key_to_nvim("p", "ALT"), nil),
   conditional_key("p", "SUPER|SHIFT", send_key_to_nvim("P", "ALT"), nil),
 

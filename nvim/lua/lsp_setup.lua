@@ -13,10 +13,7 @@ local function setup_lsp_keymaps(bufnr)
   local telescope = require("telescope.builtin")
 
   -- 定義・参照ジャンプ (Leader key)
-  keymap("n", "<leader>d", telescope.lsp_definitions, opts("Go to definition"))
-  keymap("n", "<leader>y", telescope.lsp_type_definitions, opts("Go to type definition"))
   keymap("n", "<leader>i", telescope.lsp_implementations, opts("Go to implementation"))
-  keymap("n", "<leader>r", telescope.lsp_references, opts("Show references"))
 
   -- 定義・参照ジャンプ (Cmd key via WezTerm)
   keymap("n", "<M-CR>", telescope.lsp_definitions, opts("Go to definition"))
@@ -27,8 +24,6 @@ local function setup_lsp_keymaps(bufnr)
   keymap("n", "<leader>rn", vim.lsp.buf.rename, opts("Rename symbol"))
 
   -- コードアクション
-  keymap("n", "<leader>a", vim.lsp.buf.code_action, opts("Code action"))
-  keymap("x", "<leader>a", vim.lsp.buf.code_action, opts("Code action"))
   keymap("n", "<M-.>", vim.lsp.buf.code_action, opts("Quick fix / Code action"))
 
   -- ホバー / 診断表示

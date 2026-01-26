@@ -18,6 +18,7 @@ return {
   initial_rows = 60,
   window_background_opacity = 0.90,
   window_decorations = "RESIZE",
+  exit_behavior = "Close",
 
   --------------------------------------------------------------------------------
   -- Tab Bar

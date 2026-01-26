@@ -63,3 +63,14 @@ source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 eval "$(mise activate zsh)"
+
+# ====================
+# nvim を新しいタブで開く
+# ====================
+nvim() {
+  if [[ -n "$WEZTERM_PANE" ]]; then
+    /Applications/WezTerm.app/Contents/MacOS/wezterm cli spawn --cwd "$(pwd)" -- nvim "$@"
+  else
+    command nvim "$@"
+  fi
+}
