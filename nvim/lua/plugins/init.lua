@@ -22,6 +22,7 @@ require("lazy").setup({
     { import = "plugins.buffer" },
     { import = "plugins.statusline" },
     { import = "plugins.copilot" },
+    { import = "plugins.git" },
     { import = "plugins.lang.rust" },
     { import = "plugins.lang.dart" },
   },
