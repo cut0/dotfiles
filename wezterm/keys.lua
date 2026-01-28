@@ -5,100 +5,57 @@ local act = wezterm.action
 local M = {}
 
 --------------------------------------------------------------------------------
--- Helper Functions
+-- Keys
 --------------------------------------------------------------------------------
 
--- Neovim が実行中かどうかを判定
-local function is_nvim(pane)
-  local process_name = pane:get_foreground_process_name()
-  if process_name then
-    local name = process_name:match("([^/\\]+)$")
-    return name == "nvim" or name == "vim"
-  end
-  return false
-end
-
--- Neovim 実行時は別のキーを送信、それ以外はデフォルトアクション
-local function conditional_key(key, mods, nvim_action, default_action)
-  return {
-    key = key,
-    mods = mods,
+local keys = {
+  -- Toggle Split/Zoom: Cmd+M
+  -- 1ペインの場合: 縦に分割 + 下ペインを2列に
+  -- 複数ペインの場合: 上ペインをズーム/解除時は下左にフォーカス
+  {
+    key = "m",
+    mods = "SUPER",
     action = wezterm.action_callback(function(window, pane)
-      if is_nvim(pane) then
-        window:perform_action(nvim_action, pane)
+      local tab = window:active_tab()
+      local panes_with_info = tab:panes_with_info()
+
+      if #panes_with_info == 1 then
+        -- 1ペインのみ: 縦に分割し、下のペインをさらに2列に
+        local bottom_left = pane:split({ direction = "Bottom" })
+        bottom_left:split({ direction = "Right" })
+        -- 2行目1列目（左下）にフォーカス
+        bottom_left:activate()
       else
-        if default_action then
-          window:perform_action(default_action, pane)
+        -- 現在ズーム中かどうか確認
+        local is_zoomed = panes_with_info[1].is_zoomed
+
+        -- 1行目（top最小）と2行目1列目（top最大かつleft最小）を特定
+        local top_pane = panes_with_info[1]
+        local bottom_left_pane = nil
+
+        for _, p in ipairs(panes_with_info) do
+          if p.top < top_pane.top then
+            top_pane = p
+          end
+          if bottom_left_pane == nil or p.top > bottom_left_pane.top or
+             (p.top == bottom_left_pane.top and p.left < bottom_left_pane.left) then
+            bottom_left_pane = p
+          end
+        end
+
+        if is_zoomed then
+          -- ズーム解除して2行目1列目にフォーカス
+          window:perform_action(act.TogglePaneZoomState, pane)
+          bottom_left_pane.pane:activate()
+        else
+          -- 1行目をズーム
+          top_pane.pane:activate()
+          window:perform_action(act.TogglePaneZoomState, top_pane.pane)
         end
       end
     end),
-  }
-end
+  },
 
--- Neovim にキーを送信
-local function send_key_to_nvim(key, mods)
-  return act.SendKey({ key = key, mods = mods })
-end
-
---------------------------------------------------------------------------------
--- Neovim Integration Keys (Cmd -> Alt conversion)
---------------------------------------------------------------------------------
-
-local nvim_keys = {
-  -- File Tree
-  conditional_key("b", "SUPER", send_key_to_nvim("b", "ALT"), nil),
-  conditional_key("e", "SUPER|SHIFT", send_key_to_nvim("e", "ALT"), nil),
-
-  -- LSP Navigation
-  conditional_key("Return", "SUPER", send_key_to_nvim("Return", "ALT"), nil),
-  conditional_key("Return", "SUPER|ALT", send_key_to_nvim("Return", "ALT|CTRL"), nil),
-  conditional_key("Return", "SUPER|SHIFT", send_key_to_nvim("Return", "ALT|SHIFT"), nil),
-
-  -- Terminal
-  conditional_key("m", "SUPER", send_key_to_nvim("m", "ALT"), act.Hide),
-
-  -- Window Switching (Cmd+1-9)
-  conditional_key("1", "SUPER", send_key_to_nvim("1", "ALT"), act.ActivateTab(0)),
-  conditional_key("2", "SUPER", send_key_to_nvim("2", "ALT"), act.ActivateTab(1)),
-  conditional_key("3", "SUPER", send_key_to_nvim("3", "ALT"), act.ActivateTab(2)),
-  conditional_key("4", "SUPER", send_key_to_nvim("4", "ALT"), act.ActivateTab(3)),
-  conditional_key("5", "SUPER", send_key_to_nvim("5", "ALT"), act.ActivateTab(4)),
-  conditional_key("6", "SUPER", send_key_to_nvim("6", "ALT"), act.ActivateTab(5)),
-  conditional_key("7", "SUPER", send_key_to_nvim("7", "ALT"), act.ActivateTab(6)),
-  conditional_key("8", "SUPER", send_key_to_nvim("8", "ALT"), act.ActivateTab(7)),
-  conditional_key("9", "SUPER", send_key_to_nvim("9", "ALT"), act.ActivateTab(-1)),
-
-  -- Window Management
-  conditional_key("\\", "SUPER", send_key_to_nvim("\\", "ALT"), act.SplitHorizontal({ domain = "CurrentPaneDomain" })),
-  conditional_key("w", "SUPER", send_key_to_nvim("w", "ALT"), act.CloseCurrentPane({ confirm = true })),
-  conditional_key("w", "SUPER|SHIFT", send_key_to_nvim("w", "ALT|SHIFT"), nil),
-  conditional_key("q", "SUPER", send_key_to_nvim("q", "ALT"), act.QuitApplication),
-
-  -- Search
-  conditional_key("f", "SUPER|SHIFT", send_key_to_nvim("f", "ALT"), nil),
-  conditional_key("g", "SUPER|SHIFT", send_key_to_nvim("G", "ALT"), nil),
-  conditional_key("p", "SUPER", send_key_to_nvim("p", "ALT"), nil),
-  conditional_key("p", "SUPER|SHIFT", send_key_to_nvim("P", "ALT"), nil),
-
-  -- Editor Commands
-  conditional_key("s", "SUPER", send_key_to_nvim("s", "ALT"), nil),
-  conditional_key("z", "SUPER", send_key_to_nvim("z", "ALT|CTRL"), nil),
-  conditional_key("z", "SUPER|SHIFT", send_key_to_nvim("z", "ALT|CTRL|SHIFT"), nil),
-  conditional_key("a", "SUPER", send_key_to_nvim("a", "ALT"), nil),
-
-  -- Code Action
-  conditional_key(".", "SUPER", send_key_to_nvim(".", "ALT"), nil),
-
-  -- Window Resize
-  conditional_key("RightArrow", "CTRL|SHIFT", send_key_to_nvim("RightArrow", "CTRL|SHIFT"), nil),
-  conditional_key("LeftArrow", "CTRL|SHIFT", send_key_to_nvim("LeftArrow", "CTRL|SHIFT"), nil),
-}
-
---------------------------------------------------------------------------------
--- Base Keys (Always active)
---------------------------------------------------------------------------------
-
-local base_keys = {
   -- Font Size
   { key = "-", mods = "SUPER", action = act.DecreaseFontSize },
   { key = "+", mods = "SUPER", action = act.IncreaseFontSize },
@@ -111,6 +68,12 @@ local base_keys = {
 
   -- Tabs
   { key = "t", mods = "SUPER", action = act.SpawnTab("CurrentPaneDomain") },
+  { key = "p", mods = "SUPER", action = act.ShowTabNavigator },
+
+  -- Window Management
+  { key = "w", mods = "SUPER", action = act.CloseCurrentPane({ confirm = true }) },
+  { key = "q", mods = "SUPER", action = act.QuitApplication },
+  { key = "\\", mods = "SUPER", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
 
   -- Pane Navigation
   { key = "LeftArrow", mods = "SUPER", action = act.ActivatePaneDirection("Left") },
@@ -132,14 +95,7 @@ local base_keys = {
 --------------------------------------------------------------------------------
 
 function M.get_keys()
-  local all_keys = {}
-  for _, key in ipairs(nvim_keys) do
-    table.insert(all_keys, key)
-  end
-  for _, key in ipairs(base_keys) do
-    table.insert(all_keys, key)
-  end
-  return all_keys
+  return keys
 end
 
 return M
