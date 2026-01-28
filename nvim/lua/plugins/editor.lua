@@ -162,7 +162,7 @@ return {
         },
         filters = {
           dotfiles = false,
-          custom = { "^.git$", "node_modules", ".cache" },
+          custom = { "^.git$", "node_modules" },
         },
         git = {
           enable = true,
@@ -178,7 +178,7 @@ return {
         actions = {
           open_file = {
             quit_on_open = false,
-            resize_window = true,
+            resize_window = false,
           },
         },
       })

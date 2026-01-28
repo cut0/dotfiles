@@ -12,6 +12,8 @@ opt.expandtab = true
 
 opt.splitright = true
 
+opt.equalalways = false
+
 opt.clipboard = "unnamed"
 
 opt.updatetime = 300
