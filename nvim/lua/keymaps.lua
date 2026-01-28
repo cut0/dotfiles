@@ -43,21 +43,14 @@ keymap("i", "jj", "<Esc>", { noremap = true, silent = true })
 --------------------------------------------------------------------------------
 
 -- 保存
-keymap("n", "<M-s>", "<cmd>w<CR>", { noremap = true, silent = true, desc = "Save file" })
-keymap("i", "<M-s>", "<cmd>w<CR>", { noremap = true, silent = true, desc = "Save file" })
+keymap("n", "<leader>w", "<cmd>w<CR>", { noremap = true, silent = true, desc = "Save file" })
 
--- Undo / Redo (Cmd+Z / Cmd+Shift+Z)
-keymap("n", "<M-C-z>", "u", { noremap = true, silent = true, desc = "Undo" })
-keymap("i", "<M-C-z>", "<C-o>u", { noremap = true, silent = true, desc = "Undo" })
-keymap("n", "<M-C-S-z>", "<C-r>", { noremap = true, silent = true, desc = "Redo" })
-keymap("i", "<M-C-S-z>", "<C-o><C-r>", { noremap = true, silent = true, desc = "Redo" })
 
 -- 全選択
-keymap("n", "<M-a>", "ggVG", { noremap = true, silent = true, desc = "Select all" })
-keymap("i", "<M-a>", "<Esc>ggVG", { noremap = true, silent = true, desc = "Select all" })
+keymap("n", "<leader>a", "ggVG", { noremap = true, silent = true, desc = "Select all" })
 
--- 折り返し表示の切り替え (Option+Z)
-keymap("n", "<M-z>", function()
+-- 折り返し表示の切り替え
+keymap("n", "<leader>z", function()
   vim.wo.wrap = not vim.wo.wrap
 end, { noremap = true, silent = true, desc = "Toggle word wrap" })
 
@@ -65,8 +58,8 @@ end, { noremap = true, silent = true, desc = "Toggle word wrap" })
 -- File Tree
 --------------------------------------------------------------------------------
 
-keymap("n", "<M-b>", "<cmd>NvimTreeToggle<CR>", { noremap = true, silent = true, desc = "Toggle file tree" })
-keymap("n", "<M-e>", "<cmd>NvimTreeFocus<CR>", { noremap = true, silent = true, desc = "Focus file tree" })
+keymap("n", "<leader>b", "<cmd>NvimTreeToggle<CR>", { noremap = true, silent = true, desc = "Toggle file tree" })
+keymap("n", "<leader>e", "<cmd>NvimTreeFocus<CR>", { noremap = true, silent = true, desc = "Focus file tree" })
 
 --------------------------------------------------------------------------------
 -- Search (Telescope)
@@ -149,19 +142,19 @@ local function live_grep_with_filters()
   end)
 end
 
-keymap("n", "<M-f>", function()
-  require("telescope.builtin").live_grep()
-end, { noremap = true, silent = true, desc = "Search in project" })
-
-keymap("n", "<M-G>", live_grep_with_filters, { noremap = true, silent = true, desc = "Search with filters" })
-
-keymap("n", "<M-p>", function()
+keymap("n", "<leader>p", function()
   require("telescope.builtin").find_files()
 end, { noremap = true, silent = true, desc = "Find files" })
 
-keymap("n", "<M-P>", function()
+keymap("n", "<leader>P", function()
   require("telescope.builtin").commands()
 end, { noremap = true, silent = true, desc = "Command palette" })
+
+keymap("n", "<leader>f", function()
+  require("telescope.builtin").live_grep()
+end, { noremap = true, silent = true, desc = "Search in project" })
+
+keymap("n", "<leader>g", live_grep_with_filters, { noremap = true, silent = true, desc = "Search with filters" })
 
 keymap("n", "<leader>ff", function() require("telescope.builtin").find_files() end,
   { noremap = true, silent = true, desc = "Find files" })
@@ -207,20 +200,20 @@ local function goto_editor_window(n)
   end
 end
 
--- Cmd+数字 でウィンドウ切り替え
+-- Leader+数字 でウィンドウ切り替え
 for i = 1, 9 do
-  keymap("n", "<M-" .. i .. ">", function() goto_editor_window(i) end,
+  keymap("n", "<leader>" .. i, function() goto_editor_window(i) end,
     { noremap = true, silent = true, desc = "Go to editor window " .. i })
 end
 
--- 新しいエディタウィンドウを追加 (Cmd+\)
-keymap("n", "<M-\\>", function()
+-- 新しいエディタウィンドウを追加
+keymap("n", "<leader>\\", function()
   vim.cmd("vsplit")
   vim.cmd("enew")
 end, { noremap = true, silent = true, desc = "Add new editor window" })
 
--- バッファ/ウィンドウを閉じる (Cmd+W)
-keymap("n", "<M-w>", function()
+-- バッファ/ウィンドウを閉じる
+keymap("n", "<leader>x", function()
   local win_count = #vim.api.nvim_list_wins()
   local current_buf = vim.api.nvim_get_current_buf()
   local buf_name = vim.api.nvim_buf_get_name(current_buf)
@@ -236,29 +229,190 @@ keymap("n", "<M-w>", function()
   end
 end, { noremap = true, silent = true, desc = "Close current buffer" })
 
--- Neovim を終了 (Cmd+Q)
-keymap("n", "<M-q>", "<cmd>qa<CR>", { noremap = true, silent = true, desc = "Quit Neovim" })
+-- Neovim を終了
+keymap("n", "<leader>Q", "<cmd>qa<CR>", { noremap = true, silent = true, desc = "Quit Neovim" })
 
--- 全ウィンドウを閉じる (Cmd+Shift+W)
-keymap("n", "<M-S-w>", function()
+-- 全ウィンドウを閉じる
+keymap("n", "<leader>X", function()
   vim.cmd("only")
   vim.cmd("enew")
 end, { noremap = true, silent = true, desc = "Close all windows" })
 
--- ウィンドウリサイズ (Ctrl+Shift+Arrow)
-keymap("n", "<C-S-Right>", "<cmd>vertical resize +5<CR>",
-  { noremap = true, silent = true, desc = "Increase window width" })
-keymap("n", "<C-S-Left>", "<cmd>vertical resize -5<CR>",
-  { noremap = true, silent = true, desc = "Decrease window width" })
-
 --------------------------------------------------------------------------------
--- Terminal
+-- Window Buffer Stack Management
 --------------------------------------------------------------------------------
 
-keymap("n", "<M-m>", function()
-  _G.toggle_fullscreen_terminal()
-end, { noremap = true, silent = true, desc = "Toggle fullscreen terminal" })
+-- ウィンドウごとのバッファスタックを管理
+local window_buffer_stacks = {}
 
-keymap("t", "<M-m>", function()
-  _G.toggle_fullscreen_terminal()
-end, { noremap = true, silent = true, desc = "Toggle fullscreen terminal" })
+-- ウィンドウのバッファスタックを取得
+local function get_window_stack(win)
+  if not window_buffer_stacks[win] then
+    window_buffer_stacks[win] = {}
+  end
+  return window_buffer_stacks[win]
+end
+
+-- スタックにバッファを追加（重複は削除して先頭に）
+local function push_buffer_to_stack(win, buf)
+  -- ファイラーのバッファは追加しない
+  local ft = vim.bo[buf].filetype
+  if ft == "NvimTree" or ft == "neo-tree" or ft == "oil" or ft == "" then
+    local name = vim.api.nvim_buf_get_name(buf)
+    if name == "" then return end
+  end
+
+  local stack = get_window_stack(win)
+
+  -- 既に存在する場合は削除
+  for i, b in ipairs(stack) do
+    if b == buf then
+      table.remove(stack, i)
+      break
+    end
+  end
+
+  -- 先頭に追加
+  table.insert(stack, 1, buf)
+end
+
+-- スタックからバッファを削除
+local function remove_buffer_from_stack(win, buf)
+  local stack = get_window_stack(win)
+  for i, b in ipairs(stack) do
+    if b == buf then
+      table.remove(stack, i)
+      break
+    end
+  end
+end
+
+-- スタックの次のバッファを取得（有効なバッファのみ）
+local function get_next_buffer_from_stack(win, exclude_buf)
+  local stack = get_window_stack(win)
+  for _, buf in ipairs(stack) do
+    if buf ~= exclude_buf and vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buflisted then
+      return buf
+    end
+  end
+  return nil
+end
+
+-- BufEnter でスタックを更新
+vim.api.nvim_create_autocmd("BufEnter", {
+  callback = function()
+    local win = vim.api.nvim_get_current_win()
+    local buf = vim.api.nvim_get_current_buf()
+    push_buffer_to_stack(win, buf)
+  end,
+})
+
+-- ウィンドウが閉じられたらスタックを削除
+vim.api.nvim_create_autocmd("WinClosed", {
+  callback = function(args)
+    local win = tonumber(args.match)
+    if win then
+      window_buffer_stacks[win] = nil
+    end
+  end,
+})
+
+-- バッファを隣のウィンドウに移動する
+local function move_buffer_to_adjacent_window(direction)
+  local current_win = vim.api.nvim_get_current_win()
+  local current_buf = vim.api.nvim_win_get_buf(current_win)
+
+  -- 現在のウィンドウがエディタウィンドウか確認
+  local ft = vim.bo[current_buf].filetype
+  if ft == "NvimTree" or ft == "neo-tree" or ft == "oil" then
+    return
+  end
+
+  -- エディタウィンドウ一覧を取得
+  local editor_wins = get_editor_windows()
+  if #editor_wins < 2 then
+    return
+  end
+
+  -- 現在のウィンドウの位置を取得
+  local current_pos = vim.api.nvim_win_get_position(current_win)
+  local current_row, current_col = current_pos[1], current_pos[2]
+
+  -- 隣接するウィンドウを探す
+  local target_win = nil
+  local best_distance = math.huge
+
+  for _, win in ipairs(editor_wins) do
+    if win ~= current_win then
+      local pos = vim.api.nvim_win_get_position(win)
+      local row, col = pos[1], pos[2]
+
+      local is_valid = false
+      local distance = 0
+
+      if direction == "left" and col < current_col then
+        is_valid = true
+        distance = current_col - col
+      elseif direction == "right" and col > current_col then
+        is_valid = true
+        distance = col - current_col
+      elseif direction == "up" and row < current_row then
+        is_valid = true
+        distance = current_row - row
+      elseif direction == "down" and row > current_row then
+        is_valid = true
+        distance = row - current_row
+      end
+
+      if is_valid and distance < best_distance then
+        best_distance = distance
+        target_win = win
+      end
+    end
+  end
+
+  if not target_win then
+    return
+  end
+
+  -- 現在のウィンドウのスタックからバッファを削除
+  remove_buffer_from_stack(current_win, current_buf)
+
+  -- ターゲットウィンドウのスタックにバッファを追加
+  push_buffer_to_stack(target_win, current_buf)
+
+  -- ターゲットウィンドウにバッファを開く
+  vim.api.nvim_win_set_buf(target_win, current_buf)
+
+  -- 現在のウィンドウで次のバッファを表示（スタックから取得）
+  local next_buf = get_next_buffer_from_stack(current_win, current_buf)
+
+  if next_buf then
+    vim.api.nvim_win_set_buf(current_win, next_buf)
+  else
+    -- スタックにバッファがない場合は新しい空バッファを作成
+    local new_buf = vim.api.nvim_create_buf(true, false)
+    vim.api.nvim_win_set_buf(current_win, new_buf)
+  end
+
+  -- ターゲットウィンドウにフォーカスを移す
+  vim.api.nvim_set_current_win(target_win)
+end
+
+keymap("n", "<leader><S-Left>", function() move_buffer_to_adjacent_window("left") end,
+  { noremap = true, silent = true, desc = "Move buffer to left window" })
+keymap("n", "<leader><S-Right>", function() move_buffer_to_adjacent_window("right") end,
+  { noremap = true, silent = true, desc = "Move buffer to right window" })
+keymap("n", "<leader><S-Up>", function() move_buffer_to_adjacent_window("up") end,
+  { noremap = true, silent = true, desc = "Move buffer to upper window" })
+keymap("n", "<leader><S-Down>", function() move_buffer_to_adjacent_window("down") end,
+  { noremap = true, silent = true, desc = "Move buffer to lower window" })
+
+--------------------------------------------------------------------------------
+-- Window Resize
+--------------------------------------------------------------------------------
+
+keymap("n", "<C-S-Right>", "2<C-w>>",
+  { noremap = true, silent = true, desc = "Expand window to right" })
+keymap("n", "<C-S-Left>", "2<C-w><",
+  { noremap = true, silent = true, desc = "Expand window to left" })

@@ -15,16 +15,16 @@ local function setup_lsp_keymaps(bufnr)
   -- 定義・参照ジャンプ (Leader key)
   keymap("n", "<leader>i", telescope.lsp_implementations, opts("Go to implementation"))
 
-  -- 定義・参照ジャンプ (Cmd key via WezTerm)
-  keymap("n", "<M-CR>", telescope.lsp_definitions, opts("Go to definition"))
-  keymap("n", "<M-C-CR>", telescope.lsp_type_definitions, opts("Go to type definition"))
-  keymap("n", "<M-S-CR>", telescope.lsp_references, opts("Show references"))
+  -- 定義・参照ジャンプ
+  keymap("n", "<leader><CR>", telescope.lsp_definitions, opts("Go to definition"))
+  keymap("n", "<leader><S-CR>", telescope.lsp_references, opts("Show references"))
+  keymap("n", "<leader><A-CR>", telescope.lsp_type_definitions, opts("Go to type definition"))
 
   -- リネーム
   keymap("n", "<leader>rn", vim.lsp.buf.rename, opts("Rename symbol"))
 
   -- コードアクション
-  keymap("n", "<M-.>", vim.lsp.buf.code_action, opts("Quick fix / Code action"))
+  keymap("n", "<leader>.", vim.lsp.buf.code_action, opts("Quick fix / Code action"))
 
   -- ホバー / 診断表示
   keymap("n", "K", function()
