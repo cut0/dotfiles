@@ -36,6 +36,7 @@ path=(
   $HOME/Library/pnpm
   $HOME/.pub-cache/bin
   $HOME/.local/share/aquaproj-aqua/bin
+  /Applications/WezTerm.app/Contents/MacOS
   $path
 )
 typeset -U path  # 重複を削除
@@ -71,9 +72,9 @@ nvim() {
   if [[ -n "$WEZTERM_PANE" ]]; then
     local project_name="${PWD##*/}"
     local pane_id
-    pane_id=$(/Applications/WezTerm.app/Contents/MacOS/wezterm cli spawn --cwd "$(pwd)" -- nvim "$@")
+    pane_id=$(wezterm cli spawn --cwd "$(pwd)" -- nvim "$@")
     if [[ -n "$pane_id" ]]; then
-      /Applications/WezTerm.app/Contents/MacOS/wezterm cli set-tab-title --pane-id "$pane_id" "$project_name"
+      wezterm cli set-tab-title --pane-id "$pane_id" "$project_name"
     fi
   else
     command nvim "$@"

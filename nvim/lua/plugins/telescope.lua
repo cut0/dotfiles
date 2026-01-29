@@ -13,7 +13,7 @@ return {
         end,
       },
     },
-    cmd = "Telescope",
+    lazy = false,
     config = function()
       local telescope = require("telescope")
       local actions = require("telescope.actions")
@@ -89,6 +89,10 @@ return {
           },
           path_display = { "truncate" },
           color_devicons = true,
+          cache_picker = {
+            num_pickers = 10,
+            limit_entries = 1000,
+          },
           mappings = {
             i = {
               ["<C-j>"] = actions.move_selection_next,

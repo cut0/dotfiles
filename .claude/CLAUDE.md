@@ -6,6 +6,7 @@
 |--------|------|
 | `code-quality` | 全言語共通のコード品質ルールと制約事項 |
 | `git-ops` | Git ワークフロー、コミットルール、PR 作成ガイドライン |
+| `jj` | Jujutsu (jj) バージョン管理システムの操作ガイド |
 | `typescript` | JavaScript/TypeScript + React のコーディングルール |
 | `python` | Python のコーディングルール |
 | `go` | Go のコーディングルール |
