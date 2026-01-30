@@ -1,3 +1,10 @@
+-- jj リポジトリかどうかを検出
+local function is_jj_repo()
+  return vim.fn.finddir(".jj", vim.fn.getcwd() .. ";") ~= ""
+end
+
+local is_jj = is_jj_repo()
+
 return {
   {
     "nvim-tree/nvim-web-devicons",
@@ -89,98 +96,149 @@ return {
     },
   },
   {
-    "nvim-tree/nvim-tree.lua",
-    version = "*",
+    "Cretezy/neo-tree-jj.nvim",
+    cond = is_jj,
     lazy = false,
-    dependencies = {
+  },
+  {
+    "nvim-neo-tree/neo-tree.nvim",
+    branch = "v3.x",
+    lazy = false,
+    dependencies = is_jj and {
+      "nvim-lua/plenary.nvim",
       "nvim-tree/nvim-web-devicons",
+      "MunifTanjim/nui.nvim",
+      "Cretezy/neo-tree-jj.nvim",
+    } or {
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons",
+      "MunifTanjim/nui.nvim",
     },
     config = function()
-      require("nvim-tree").setup({
-        view = {
-          width = 30,
-          side = "left",
-          signcolumn = "yes",
+
+      require("neo-tree").setup({
+        sources = is_jj and {
+          "filesystem",
+          "buffers",
+          "jj",
+        } or {
+          "filesystem",
+          "buffers",
+          "git_status",
         },
-        renderer = {
-          root_folder_label = false,
-          group_empty = true,
-          highlight_git = "none",
-          highlight_opened_files = "name",
-          indent_markers = {
-            enable = true,
-            inline_arrows = true,
-            icons = {
-              corner = "└",
-              edge = "│",
-              item = "│",
-              bottom = "─",
-              none = " ",
-            },
-          },
-          icons = {
-            show = {
-              file = true,
-              folder = true,
-              folder_arrow = true,
-              git = true,
-              modified = true,
-            },
-            glyphs = {
-              default = "",
-              symlink = "",
-              bookmark = "󰆤",
-              modified = "●",
-              folder = {
-                arrow_closed = "",
-                arrow_open = "",
-                default = "",
-                open = "",
-                empty = "",
-                empty_open = "",
-                symlink = "",
-                symlink_open = "",
-              },
-              git = {
-                unstaged = "M",
-                staged = "A",
-                unmerged = "",
-                renamed = "R",
-                untracked = "U",
-                deleted = "D",
-                ignored = "◌",
-              },
-            },
+        source_selector = {
+          winbar = true,
+          sources = is_jj and {
+            { source = "filesystem", display_name = " Files" },
+            { source = "jj", display_name = "󰊢 JJ" },
+            { source = "buffers", display_name = " Buffers" },
+          } or {
+            { source = "filesystem", display_name = " Files" },
+            { source = "git_status", display_name = " Git" },
+            { source = "buffers", display_name = " Buffers" },
           },
         },
-        update_focused_file = {
-          enable = true,
-          update_root = false,
+        close_if_last_window = false,
+        hide_root_node = true,
+        enable_git_status = true,
+        enable_diagnostics = false,
+      default_component_configs = {
+        indent = {
+          indent_size = 2,
+          padding = 1,
+          with_markers = true,
+          indent_marker = "│",
+          last_indent_marker = "└",
+          with_expanders = true,
+          expander_collapsed = "",
+          expander_expanded = "",
         },
-        diagnostics = {
-          enable = false,
-        },
-        filters = {
-          dotfiles = false,
-          custom = { "^.git$", "node_modules" },
-        },
-        git = {
-          enable = true,
-          ignore = false,
-          show_on_dirs = false,
-          show_on_open_dirs = false,
+        icon = {
+          folder_closed = "",
+          folder_open = "",
+          folder_empty = "",
+          default = "",
         },
         modified = {
-          enable = true,
-          show_on_dirs = true,
-          show_on_open_dirs = true,
+          symbol = "●",
         },
-        actions = {
-          open_file = {
-            quit_on_open = false,
-            resize_window = false,
+        git_status = {
+          symbols = {
+            added = "A",
+            modified = "M",
+            deleted = "D",
+            renamed = "R",
+            untracked = "U",
+            ignored = "◌",
+            unstaged = "",
+            staged = "",
+            conflict = "",
           },
         },
+      },
+      window = {
+        position = "left",
+        width = 30,
+        mapping_options = {
+          noremap = true,
+          nowait = true,
+        },
+        mappings = {
+          ["<space>"] = "none",
+          ["o"] = "open",
+          -- o* のデフォルトマッピングを無効化（o キーの遅延防止）
+          -- oc: order_by_created (作成日時でソート)
+          -- od: order_by_diagnostics (診断情報でソート)
+          -- og: order_by_git_status (Git ステータスでソート)
+          -- om: order_by_modified (修正日時でソート)
+          -- on: order_by_name (ファイル名でソート)
+          -- os: order_by_size (サイズでソート)
+          -- ot: order_by_type (タイプでソート)
+          ["oc"] = "none",
+          ["od"] = "none",
+          ["og"] = "none",
+          ["om"] = "none",
+          ["on"] = "none",
+          ["os"] = "none",
+          ["ot"] = "none",
+          ["s"] = "open_split",
+          ["v"] = "open_vsplit",
+          ["C"] = "close_node",
+          ["a"] = { "add", config = { show_path = "relative" } },
+          ["d"] = "delete",
+          ["r"] = "rename",
+          ["y"] = "copy_to_clipboard",
+          ["x"] = "cut_to_clipboard",
+          ["p"] = "paste_from_clipboard",
+          ["q"] = "close_window",
+          ["R"] = "refresh",
+        },
+      },
+      filesystem = {
+        bind_to_cwd = false,
+        filtered_items = {
+          hide_dotfiles = false,
+          hide_gitignored = false,
+          hide_by_name = { ".git", ".jj", "node_modules" },
+        },
+        follow_current_file = { enabled = true },
+        group_empty_dirs = true,
+      },
+      jj = {
+        window = {
+          position = "left",
+          mappings = {
+            ["o"] = "open",
+            ["oc"] = "none",
+            ["od"] = "none",
+            ["og"] = "none",
+            ["om"] = "none",
+            ["on"] = "none",
+            ["os"] = "none",
+            ["ot"] = "none",
+          },
+        },
+      },
       })
     end,
   },

@@ -58,3 +58,13 @@ autocmd("BufWritePre", {
   end,
   desc = "Create directory if it doesn't exist",
 })
+
+autocmd("WinClosed", {
+  group = general,
+  callback = function()
+    vim.schedule(function()
+      vim.cmd("wincmd =")
+    end)
+  end,
+  desc = "Equalize window sizes after closing",
+})

@@ -12,10 +12,14 @@ return {
       vim.cmd.colorscheme("gruvbox-material")
 
       local function set_custom_highlights()
-        vim.api.nvim_set_hl(0, "NvimTreeNormal", { bg = "NONE" })
-        vim.api.nvim_set_hl(0, "NvimTreeNormalNC", { bg = "NONE" })
-        vim.api.nvim_set_hl(0, "NvimTreeEndOfBuffer", { bg = "NONE", fg = "NONE" })
-        vim.api.nvim_set_hl(0, "NvimTreeWinSeparator", { bg = "NONE", fg = "#3c3836" })
+        vim.api.nvim_set_hl(0, "NeoTreeNormal", { bg = "NONE" })
+        vim.api.nvim_set_hl(0, "NeoTreeNormalNC", { bg = "NONE" })
+        vim.api.nvim_set_hl(0, "NeoTreeEndOfBuffer", { bg = "NONE", fg = "NONE" })
+        vim.api.nvim_set_hl(0, "NeoTreeWinSeparator", { bg = "NONE", fg = "#3c3836" })
+        vim.api.nvim_set_hl(0, "NeoTreeDimText", { fg = "#d4be98", bg = "NONE" })
+        vim.api.nvim_set_hl(0, "NeoTreeFileName", { fg = "#d4be98" })
+        vim.api.nvim_set_hl(0, "NeoTreeDirectoryName", { fg = "#d4be98" })
+        vim.api.nvim_set_hl(0, "NeoTreeDirectoryIcon", { fg = "#d4be98" })
 
         -- フォーカス/ハイライト系の統一色 (オレンジ #FC802D)
         local focus_bg = "#FC802D"

@@ -8,7 +8,7 @@ return {
     event = "InsertEnter",
     opts = {
       enabled = function()
-        local disabled_filetypes = { "NvimTree", "TelescopePrompt" }
+        local disabled_filetypes = { "neo-tree", "TelescopePrompt" }
         local disabled_buftypes = { "prompt", "nofile" }
         return not vim.tbl_contains(disabled_filetypes, vim.bo.filetype)
           and not vim.tbl_contains(disabled_buftypes, vim.bo.buftype)

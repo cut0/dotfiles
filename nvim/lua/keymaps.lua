@@ -58,8 +58,8 @@ end, { noremap = true, silent = true, desc = "Toggle word wrap" })
 -- File Tree
 --------------------------------------------------------------------------------
 
-keymap("n", "<leader>b", "<cmd>NvimTreeToggle<CR>", { noremap = true, silent = true, desc = "Toggle file tree" })
-keymap("n", "<leader>e", "<cmd>NvimTreeFocus<CR>", { noremap = true, silent = true, desc = "Focus file tree" })
+keymap("n", "<leader>b", "<cmd>Neotree toggle<CR>", { noremap = true, silent = true, desc = "Toggle file tree" })
+keymap("n", "<leader>e", "<cmd>Neotree focus<CR>", { noremap = true, silent = true, desc = "Focus file tree" })
 
 --------------------------------------------------------------------------------
 -- Search (Telescope)
@@ -180,13 +180,13 @@ keymap("n", "<leader>g", live_grep_with_filters, { noremap = true, silent = true
 -- Window Management
 --------------------------------------------------------------------------------
 
--- NvimTree を除いたエディタウィンドウ一覧を取得
+-- neo-tree を除いたエディタウィンドウ一覧を取得
 local function get_editor_windows()
   local wins = {}
   for _, win in ipairs(vim.api.nvim_list_wins()) do
     local buf = vim.api.nvim_win_get_buf(win)
     local ft = vim.bo[buf].filetype
-    if ft ~= "NvimTree" then
+    if ft ~= "neo-tree" then
       table.insert(wins, win)
     end
   end
@@ -207,10 +207,10 @@ for i = 1, 9 do
     { noremap = true, silent = true, desc = "Go to editor window " .. i })
 end
 
--- 新しいエディタウィンドウを追加
+-- 新しいエディタウィンドウを右端に追加（均等幅に調整）
 keymap("n", "<leader>\\", function()
-  vim.cmd("vsplit")
-  vim.cmd("enew")
+  vim.cmd("botright vnew")
+  vim.cmd("wincmd =")
 end, { noremap = true, silent = true, desc = "Add new editor window" })
 
 -- バッファ/ウィンドウを閉じる
@@ -258,7 +258,7 @@ end
 local function push_buffer_to_stack(win, buf)
   -- ファイラーのバッファは追加しない
   local ft = vim.bo[buf].filetype
-  if ft == "NvimTree" or ft == "neo-tree" or ft == "oil" or ft == "" then
+  if ft == "neo-tree" or ft == "oil" or ft == "" then
     local name = vim.api.nvim_buf_get_name(buf)
     if name == "" then return end
   end
@@ -325,7 +325,7 @@ local function move_buffer_to_adjacent_window(direction)
 
   -- 現在のウィンドウがエディタウィンドウか確認
   local ft = vim.bo[current_buf].filetype
-  if ft == "NvimTree" or ft == "neo-tree" or ft == "oil" then
+  if ft == "neo-tree" or ft == "oil" then
     return
   end
 
