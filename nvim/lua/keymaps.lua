@@ -410,6 +410,16 @@ keymap("n", "<leader><S-Down>", function() move_buffer_to_adjacent_window("down"
   { noremap = true, silent = true, desc = "Move buffer to lower window" })
 
 --------------------------------------------------------------------------------
+-- Comment Toggle
+--------------------------------------------------------------------------------
+
+-- Normal mode: 現在行をコメントアウト/アンコメント
+keymap("n", "<leader>/", "gcc", { remap = true, silent = true, desc = "Toggle comment" })
+
+-- Visual mode: 選択範囲をコメントアウト/アンコメント
+keymap("v", "<leader>/", "gc", { remap = true, silent = true, desc = "Toggle comment" })
+
+--------------------------------------------------------------------------------
 -- Window Resize
 --------------------------------------------------------------------------------
 
