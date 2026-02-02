@@ -58,8 +58,17 @@ end, { noremap = true, silent = true, desc = "Toggle word wrap" })
 -- File Tree
 --------------------------------------------------------------------------------
 
-keymap("n", "<leader>b", "<cmd>Neotree toggle<CR>", { noremap = true, silent = true, desc = "Toggle file tree" })
-keymap("n", "<leader>e", "<cmd>Neotree focus<CR>", { noremap = true, silent = true, desc = "Focus file tree" })
+-- 最後に開いた neo-tree ソースを記憶
+vim.g.neotree_last_source = "filesystem"
+
+keymap("n", "<leader>b", function()
+  local source = vim.g.neotree_last_source or "filesystem"
+  vim.cmd("Neotree toggle source=" .. source)
+end, { noremap = true, silent = true, desc = "Toggle file tree" })
+keymap("n", "<leader>e", function()
+  local source = vim.g.neotree_last_source or "filesystem"
+  vim.cmd("Neotree focus source=" .. source)
+end, { noremap = true, silent = true, desc = "Focus file tree" })
 
 --------------------------------------------------------------------------------
 -- Search (Telescope)

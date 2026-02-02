@@ -6,6 +6,102 @@ end
 local is_jj = is_jj_repo()
 
 return {
+  -- インデント・チャンクハイライト
+  {
+    "shellRaining/hlchunk.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    config = function()
+      require("hlchunk").setup({
+        chunk = {
+          enable = true,
+          style = {
+            { fg = "#806d9c" },
+            { fg = "#c21f30" },
+          },
+          delay = 0,
+        },
+        indent = {
+          enable = true,
+          style = {
+            { fg = "#665c54" },
+          },
+        },
+        line_num = {
+          enable = true,
+          style = "#806d9c",
+        },
+        blank = {
+          enable = false,
+        },
+      })
+    end,
+  },
+  -- 検索結果ハイライト強化
+  {
+    "kevinhwang91/nvim-hlslens",
+    event = "VeryLazy",
+    config = function()
+      require("hlslens").setup({
+        calm_down = true,
+        nearest_only = true,
+      })
+      local kopts = { noremap = true, silent = true }
+      vim.keymap.set(
+        "n",
+        "n",
+        [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]],
+        kopts
+      )
+      vim.keymap.set(
+        "n",
+        "N",
+        [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]],
+        kopts
+      )
+      vim.keymap.set("n", "*", [[*<Cmd>lua require('hlslens').start()<CR>]], kopts)
+      vim.keymap.set("n", "#", [[#<Cmd>lua require('hlslens').start()<CR>]], kopts)
+      vim.keymap.set("n", "g*", [[g*<Cmd>lua require('hlslens').start()<CR>]], kopts)
+      vim.keymap.set("n", "g#", [[g#<Cmd>lua require('hlslens').start()<CR>]], kopts)
+    end,
+  },
+  -- キーバインドヘルプ表示
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    opts = {
+      preset = "helix",
+      delay = 300,
+      icons = {
+        mappings = false,
+      },
+      spec = {
+        { "<leader>f", group = "find" },
+        { "<leader>g", group = "git" },
+        { "<leader>l", group = "lsp" },
+        { "<leader>b", group = "buffer" },
+      },
+    },
+    keys = {
+      {
+        "<leader>?",
+        function()
+          require("which-key").show({ global = false })
+        end,
+        desc = "Buffer Local Keymaps",
+      },
+    },
+  },
+  {
+    "rainbowhxch/accelerated-jk.nvim",
+    event = "VeryLazy",
+    config = function()
+      require("accelerated-jk").setup()
+    end,
+    keys = {
+      { "j", "<Plug>(accelerated_jk_gj)", mode = "n" },
+      { "k", "<Plug>(accelerated_jk_gk)", mode = "n" },
+    },
+  },
   {
     "nvim-tree/nvim-web-devicons",
     lazy = false,
@@ -142,6 +238,17 @@ return {
         hide_root_node = true,
         enable_git_status = true,
         enable_diagnostics = false,
+        event_handlers = {
+          {
+            event = "neo_tree_buffer_enter",
+            handler = function()
+              local state = require("neo-tree.sources.manager").get_state_for_window()
+              if state and state.name then
+                vim.g.neotree_last_source = state.name
+              end
+            end,
+          },
+        },
       default_component_configs = {
         indent = {
           indent_size = 2,

@@ -57,6 +57,7 @@ return {
           { "mode", fmt = function(str) return str:sub(1, 1) end },
         },
         lualine_b = is_jj and {
+          { "branch", icon = "" },
           { jj_status, icon = "󰊢" },
         } or {
           { "branch", icon = "" },
