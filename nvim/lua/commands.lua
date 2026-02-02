@@ -1,5 +1,14 @@
 local function copy_relative_path()
-  local path = vim.fn.expand("%")
+  local absolute_path = vim.fn.expand("%:p")
+  local cwd = vim.fn.getcwd()
+  local path = vim.fn.fnamemodify(absolute_path, ":." )
+  -- fnamemodify が相対パスに変換できなかった場合のフォールバック
+  if path:sub(1, 1) == "/" then
+    -- cwd からの相対パスを手動で計算
+    if absolute_path:sub(1, #cwd) == cwd then
+      path = absolute_path:sub(#cwd + 2) -- +2 for trailing slash
+    end
+  end
   vim.fn.setreg("+", path)
   vim.notify("Copied: " .. path, vim.log.levels.INFO)
 end
@@ -16,7 +25,7 @@ local function copy_filename()
   vim.notify("Copied: " .. filename, vim.log.levels.INFO)
 end
 
-local function get_github_url()
+local function get_github_url(branch)
   local file = vim.fn.expand("%")
   local line = vim.fn.line(".")
   local git_root = vim.fn.system("git rev-parse --show-toplevel"):gsub("\n", "")
@@ -25,7 +34,7 @@ local function get_github_url()
   remote = remote:gsub("git@github.com:", "https://github.com/")
   remote = remote:gsub("%.git$", "")
 
-  local branch = vim.fn.system("git rev-parse --abbrev-ref HEAD"):gsub("\n", "")
+  branch = branch or vim.fn.system("git rev-parse --abbrev-ref HEAD"):gsub("\n", "")
   local rel_path = file:gsub("^" .. vim.fn.escape(git_root, "%-%.") .. "/", "")
 
   return remote .. "/blob/" .. branch .. "/" .. rel_path .. "#L" .. line
@@ -43,8 +52,36 @@ local function copy_github_url()
   vim.notify("Copied GitHub URL", vim.log.levels.INFO)
 end
 
+local function open_in_github_with_branch()
+  local branches_output = vim.fn.system("git branch -r --format='%(refname:short)'")
+  local branches = {}
+  for branch in branches_output:gmatch("[^\n]+") do
+    -- origin/ プレフィックスを除去
+    local clean_branch = branch:gsub("^origin/", "")
+    if clean_branch ~= "HEAD" then
+      table.insert(branches, clean_branch)
+    end
+  end
+
+  if #branches == 0 then
+    vim.notify("No remote branches found", vim.log.levels.WARN)
+    return
+  end
+
+  vim.ui.select(branches, {
+    prompt = "Select remote branch:",
+  }, function(selected)
+    if selected then
+      local url = get_github_url(selected)
+      vim.fn.system("open " .. url)
+      vim.notify("Opened in GitHub (" .. selected .. ")", vim.log.levels.INFO)
+    end
+  end)
+end
+
 vim.api.nvim_create_user_command("Cut0CopyRelativePath", copy_relative_path, { desc = "Copy relative file path" })
 vim.api.nvim_create_user_command("Cut0CopyAbsolutePath", copy_absolute_path, { desc = "Copy absolute file path" })
 vim.api.nvim_create_user_command("Cut0CopyFilename", copy_filename, { desc = "Copy filename" })
 vim.api.nvim_create_user_command("Cut0OpenInGitHub", open_in_github, { desc = "Open current file in GitHub" })
+vim.api.nvim_create_user_command("Cut0OpenInGitHubWithBranch", open_in_github_with_branch, { desc = "Open in GitHub (select branch)" })
 vim.api.nvim_create_user_command("Cut0CopyGitHubURL", copy_github_url, { desc = "Copy GitHub URL of current file" })
