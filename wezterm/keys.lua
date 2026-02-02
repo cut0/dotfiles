@@ -72,6 +72,7 @@ local keys = {
 
   -- Window Management
   { key = "w", mods = "SUPER", action = act.CloseCurrentPane({ confirm = true }) },
+  { key = "w", mods = "SUPER|SHIFT", action = act.CloseCurrentTab({ confirm = true }) },
   { key = "q", mods = "SUPER", action = act.QuitApplication },
   { key = "\\", mods = "SUPER", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
 
