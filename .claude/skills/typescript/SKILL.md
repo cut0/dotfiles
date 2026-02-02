@@ -2,8 +2,7 @@
 name: typescript
 description: |
   JavaScript および TypeScript プロジェクトのコーディングルールを提供します。
-  React コンポーネントの設計パターンも含みます。
-  JS/TS/React のコードを書く際に自動的にトリガーされます。
+  JS/TS のコードを書く際に自動的にトリガーされます。
 ---
 
 # TypeScript / JavaScript コーディングルール
@@ -28,40 +27,28 @@ description: |
 - any 型禁止: any 型の使用禁止
 - 非 null アサーション禁止: `!` の使用禁止
 
-## React 固有ルール
+## テストルール
 
-### コンポーネント設計
+- テストの `describe` と `it` の説明文は日本語で書く
+- テストファイル名は `*.test.ts` とする
 
-- 関数コンポーネントのみ: クラスコンポーネントは使用しない
-- Hooks を使用: 状態管理には Hooks を使用
-- 1ファイル1コンポーネント: 複数コンポーネントを1ファイルに入れない
-- PascalCase: コンポーネント名は PascalCase
-- インラインスタイル禁止: CSS-in-JS またはスタイルシートを使用
-- 高コストコンポーネントはメモ化: React.memo を活用
-- 配列インデックスを key に使用禁止: 一意な ID を使用
+```typescript
+// ✅ OK
+describe("createFormatAsJsonUsecase", () => {
+  it("有効な JSON 文字列を返す", () => {
+    // ...
+  });
 
-### コンポーネント実装
+  it("すべてのサマリーフィールドを含む", () => {
+    // ...
+  });
+});
 
-- 小さく焦点を絞る: 単一責任の原則に従う
-- カスタムフックとして抽出: ロジックの再利用には Hook を抽出
-- ローディング・エラー状態を処理: 必ず両方の状態をハンドル
-- useCallback/useMemo を使用: パフォーマンス最適化
-- 制御コンポーネントを優先: フォームは制御コンポーネントとして実装
-- 状態を親に引き上げ: 必要に応じて状態をリフトアップ
-- 直接的な DOM 操作禁止: React の仕組みを使用
+// ❌ NG
+describe("createFormatAsJsonUsecase", () => {
+  it("should return valid JSON string", () => {
+    // ...
+  });
+});
+```
 
-### TypeScript との連携
-
-- 適切な TypeScript 型定義: Props には型を定義
-- FC 型を使用: コンポーネントに `React.FC<Props>` で型付け
-- 関数は必ず useCallback: イベントハンドラ等は useCallback でラップ
-
-### テストと品質
-
-- Storybook を記載: コンポーネントには Storybook を作成
-- Form コンポーネントはテスト作成を確認: フォームはテストについて確認
-
-### アンチパターン
-
-- useEffect 使用禁止: ユーザーの許可がない限り useEffect を使用しない
-- 状態を最小化: コンポーネントの状態は必要最小限に

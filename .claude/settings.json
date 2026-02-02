@@ -59,5 +59,9 @@
     "gopls-lsp@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
-  "language": "japanese"
+  "language": "japanese",
+  "spinnerVerbs": {
+    "mode": "replace",
+    "verbs": ["ろーでぃんぐ"]
+  }
 }
