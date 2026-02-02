@@ -25,6 +25,8 @@ require("lazy").setup({
     { import = "plugins.git" },
     { import = "plugins.lang.rust" },
     { import = "plugins.lang.dart" },
+    { import = "plugins.treesitter" },
+    { import = "plugins.markdown" },
   },
   checker = { enabled = false },
   performance = {
