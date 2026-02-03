@@ -74,12 +74,6 @@ return {
       icons = {
         mappings = false,
       },
-      spec = {
-        { "<leader>f", group = "find" },
-        { "<leader>g", group = "git" },
-        { "<leader>l", group = "lsp" },
-        { "<leader>b", group = "buffer" },
-      },
     },
     keys = {
       {

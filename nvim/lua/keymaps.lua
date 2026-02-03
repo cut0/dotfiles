@@ -100,57 +100,6 @@ local function save_filters(filters)
   end
 end
 
--- 詳細検索: Cmd+Shift+G
-local function live_grep_with_filters()
-  local filters = load_filters()
-
-  vim.ui.input({
-    prompt = "Include (glob): ",
-    default = filters.include,
-  }, function(include)
-    if include == nil then return end
-
-    vim.ui.input({
-      prompt = "Exclude (glob): ",
-      default = filters.exclude,
-    }, function(exclude)
-      if exclude == nil then return end
-
-      -- フィルタを保存
-      save_filters({ include = include, exclude = exclude })
-
-      local args = { "--hidden" }
-
-      -- include パターンを追加
-      if include ~= "" then
-        for pattern in include:gmatch("[^,]+") do
-          pattern = vim.trim(pattern)
-          if pattern ~= "" then
-            table.insert(args, "--glob")
-            table.insert(args, pattern)
-          end
-        end
-      end
-
-      -- exclude パターンを追加
-      if exclude ~= "" then
-        for pattern in exclude:gmatch("[^,]+") do
-          pattern = vim.trim(pattern)
-          if pattern ~= "" then
-            table.insert(args, "--glob")
-            table.insert(args, "!" .. pattern)
-          end
-        end
-      end
-
-      require("telescope.builtin").live_grep({
-        prompt_title = "Search in Files",
-        additional_args = function() return args end,
-      })
-    end)
-  end)
-end
-
 keymap("n", "<leader>p", function()
   require("telescope.builtin").find_files()
 end, { noremap = true, silent = true, desc = "Find files" })
@@ -163,27 +112,6 @@ end, { noremap = true, silent = true, desc = "Command palette" })
 keymap("n", "<leader>f", function()
   require("telescope.builtin").live_grep()
 end, { noremap = true, silent = true, desc = "Live grep" })
-
-keymap("n", "<leader>g", live_grep_with_filters, { noremap = true, silent = true, desc = "Search with filters" })
-
--- keymap("n", "<leader>ff", function() require("telescope.builtin").find_files() end,
---   { noremap = true, silent = true, desc = "Find files" })
--- keymap("n", "<leader>fg", function() require("telescope.builtin").live_grep() end,
---   { noremap = true, silent = true, desc = "Live grep" })
--- keymap("n", "<leader>fG", live_grep_with_filters,
---   { noremap = true, silent = true, desc = "Live grep (with filters)" })
--- keymap("n", "<leader>fb", function() require("telescope.builtin").buffers() end,
---   { noremap = true, silent = true, desc = "Find buffers" })
--- keymap("n", "<leader>fh", function() require("telescope.builtin").help_tags() end,
---   { noremap = true, silent = true, desc = "Help tags" })
--- keymap("n", "<leader>fc", function() require("telescope.builtin").commands() end,
---   { noremap = true, silent = true, desc = "Commands" })
--- keymap("n", "<leader>fr", function() require("telescope.builtin").oldfiles() end,
---   { noremap = true, silent = true, desc = "Recent files" })
--- keymap("n", "<leader>fs", function() require("telescope.builtin").lsp_document_symbols() end,
---   { noremap = true, silent = true, desc = "Document symbols" })
--- keymap("n", "<leader>fS", function() require("telescope.builtin").lsp_workspace_symbols() end,
---   { noremap = true, silent = true, desc = "Workspace symbols" })
 
 --------------------------------------------------------------------------------
 -- Window Management
