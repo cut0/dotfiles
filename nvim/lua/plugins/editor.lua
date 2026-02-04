@@ -337,4 +337,23 @@ return {
       })
     end,
   },
+  -- マルチカーソル
+  {
+    "mg979/vim-visual-multi",
+    branch = "master",
+    event = "VeryLazy",
+    init = function()
+      vim.g.VM_default_mappings = 1
+      vim.g.VM_maps = {
+        ["Find Under"] = "<C-n>",
+        ["Find Subword Under"] = "<C-n>",
+        ["Add Cursor Down"] = "<C-Down>",
+        ["Add Cursor Up"] = "<C-Up>",
+        ["Select All"] = "<C-S-n>",
+        ["Skip Region"] = "<C-x>",
+        ["Remove Region"] = "<C-p>",
+      }
+      vim.g.VM_theme = "iceblue"
+    end,
+  },
 }
