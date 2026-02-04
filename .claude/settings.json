@@ -56,12 +56,15 @@
     ]
   },
   "enabledPlugins": {
-    "gopls-lsp@claude-plugins-official": true
+    "gopls-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true
   },
-  "alwaysThinkingEnabled": true,
   "language": "japanese",
   "spinnerVerbs": {
     "mode": "replace",
-    "verbs": ["ろーでぃんぐ"]
-  }
+    "verbs": [
+      "ろーでぃんぐ"
+    ]
+  },
+  "alwaysThinkingEnabled": true
 }

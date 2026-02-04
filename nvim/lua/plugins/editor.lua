@@ -204,45 +204,39 @@ return {
       "nvim-tree/nvim-web-devicons",
       "MunifTanjim/nui.nvim",
     },
+    keys = {
+      {
+        "<leader>b",
+        function() vim.cmd("Neotree toggle source=filesystem") end,
+        desc = "Toggle file tree",
+      },
+      {
+        "<leader>e",
+        function() vim.cmd("Neotree focus source=filesystem") end,
+        desc = "Focus file tree",
+      },
+    },
     config = function()
-
       require("neo-tree").setup({
         sources = is_jj and {
           "filesystem",
-          "buffers",
           "jj",
         } or {
           "filesystem",
-          "buffers",
-          "git_status",
         },
         source_selector = {
           winbar = true,
           sources = is_jj and {
             { source = "filesystem", display_name = " Files" },
             { source = "jj", display_name = "󰊢 JJ" },
-            { source = "buffers", display_name = " Buffers" },
           } or {
             { source = "filesystem", display_name = " Files" },
-            { source = "git_status", display_name = " Git" },
-            { source = "buffers", display_name = " Buffers" },
           },
         },
         close_if_last_window = false,
         hide_root_node = true,
         enable_git_status = true,
         enable_diagnostics = false,
-        event_handlers = {
-          {
-            event = "neo_tree_buffer_enter",
-            handler = function()
-              local state = require("neo-tree.sources.manager").get_state_for_window()
-              if state and state.name then
-                vim.g.neotree_last_source = state.name
-              end
-            end,
-          },
-        },
       default_component_configs = {
         indent = {
           indent_size = 2,

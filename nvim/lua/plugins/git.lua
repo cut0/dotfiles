@@ -97,6 +97,62 @@ return {
       })
     end,
   },
+  -- GitHub URL 生成
+  {
+    "linrongbin16/gitlinker.nvim",
+    cmd = "GitLink",
+    keys = {
+      { "<leader>gy", "<cmd>GitLink<cr>", mode = { "n", "v" }, desc = "Copy git link" },
+      { "<leader>gY", "<cmd>GitLink!<cr>", mode = { "n", "v" }, desc = "Open git link" },
+      { "<leader>go", "<cmd>GitLink! current_branch<cr>", mode = { "n", "v" }, desc = "Open (current branch)" },
+      { "<leader>gB", "<cmd>GitLink blame<cr>", mode = { "n", "v" }, desc = "Copy blame link" },
+      {
+        "<leader>gO",
+        function()
+          local pickers = require("telescope.pickers")
+          local finders = require("telescope.finders")
+          local conf = require("telescope.config").values
+          local actions = require("telescope.actions")
+          local action_state = require("telescope.actions.state")
+
+          local result = vim.system({ "git", "branch", "-r", "--format=%(refname:short)" }, { text = true }):wait()
+          if result.code ~= 0 then
+            vim.notify("Failed to get branches", vim.log.levels.ERROR)
+            return
+          end
+
+          local branches = {}
+          for branch in result.stdout:gmatch("[^\n]+") do
+            local clean = branch:gsub("^origin/", "")
+            if clean ~= "HEAD" then
+              table.insert(branches, clean)
+            end
+          end
+
+          pickers
+            .new({}, {
+              prompt_title = "Select Branch",
+              finder = finders.new_table({ results = branches }),
+              sorter = conf.generic_sorter({}),
+              attach_mappings = function(prompt_bufnr)
+                actions.select_default:replace(function()
+                  local selection = action_state.get_selected_entry()
+                  actions.close(prompt_bufnr)
+                  if selection then
+                    vim.cmd("GitLink! rev=" .. selection[1])
+                  end
+                end)
+                return true
+              end,
+            })
+            :find()
+        end,
+        mode = { "n", "v" },
+        desc = "Open (select branch)",
+      },
+    },
+    opts = {},
+  },
   -- Git blame 表示
   {
     "APZelos/blamer.nvim",

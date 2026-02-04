@@ -1,5 +1,7 @@
 -- Neovim 0.11 compatibility shim (must be before any plugin loads)
+---@diagnostic disable-next-line: undefined-field
 if not vim.treesitter.language.ft_to_lang then
+  ---@diagnostic disable-next-line: inject-field
   vim.treesitter.language.ft_to_lang = vim.treesitter.language.get_lang
 end
 
