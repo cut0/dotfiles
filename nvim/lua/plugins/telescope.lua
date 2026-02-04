@@ -18,8 +18,27 @@ return {
       {
         "<leader>tg",
         function()
+          local actions = require("telescope.actions")
+          local action_state = require("telescope.actions.state")
+
+          local save_input = function(prompt_bufnr)
+            local picker = action_state.get_current_picker(prompt_bufnr)
+            vim.g.last_grep_args_input = picker:_get_prompt()
+          end
+
           require("telescope").extensions.live_grep_args.live_grep_args({
-            default_text = '"" --glob ""',
+            default_text = vim.g.last_grep_args_input or '"" --glob ""',
+            attach_mappings = function(prompt_bufnr, map)
+              map("i", "<Esc>", function()
+                save_input(prompt_bufnr)
+                actions.close(prompt_bufnr)
+              end)
+              map("i", "<C-c>", function()
+                save_input(prompt_bufnr)
+                actions.close(prompt_bufnr)
+              end)
+              return true
+            end,
           })
         end,
         desc = "Live grep with args",
@@ -27,12 +46,13 @@ return {
       {
         "<leader>tr",
         function()
-          local search = vim.fn.getreg("/")
-          local cmd = ":noautocmd cfdo %s/" .. search .. "//g | update"
-          local left = vim.api.nvim_replace_termcodes("<Left>", true, false, true)
-          vim.api.nvim_feedkeys(cmd .. string.rep(left, 12), "n", false)
+          local pattern = vim.g.last_grep_pattern or ""
+          local cmd = ":noautocmd cfdo %s/" .. pattern .. "//g | update"
+          -- カーソルを置換文字列の位置に（/g | update の前）
+          local left = string.rep(vim.api.nvim_replace_termcodes("<Left>", true, false, true), 11)
+          vim.api.nvim_feedkeys(cmd .. left, "n", false)
         end,
-        desc = "Replace in quickfix (fast)",
+        desc = "Replace in quickfix",
       },
       {
         "<leader>tp",
@@ -46,7 +66,30 @@ return {
       },
       {
         "<leader>tf",
-        function() require("telescope.builtin").live_grep() end,
+        function()
+          local actions = require("telescope.actions")
+          local action_state = require("telescope.actions.state")
+
+          local save_input = function(prompt_bufnr)
+            local picker = action_state.get_current_picker(prompt_bufnr)
+            vim.g.last_live_grep_input = picker:_get_prompt()
+          end
+
+          require("telescope.builtin").live_grep({
+            default_text = vim.g.last_live_grep_input or "",
+            attach_mappings = function(prompt_bufnr, map)
+              map("i", "<Esc>", function()
+                save_input(prompt_bufnr)
+                actions.close(prompt_bufnr)
+              end)
+              map("i", "<C-c>", function()
+                save_input(prompt_bufnr)
+                actions.close(prompt_bufnr)
+              end)
+              return true
+            end,
+          })
+        end,
         desc = "Live grep",
       },
       {
@@ -181,6 +224,16 @@ return {
             i = {
               ["<C-j>"] = actions.move_selection_next,
               ["<C-k>"] = actions.move_selection_previous,
+              ["<C-q>"] = function(prompt_bufnr)
+                local action_state = require("telescope.actions.state")
+                local picker = action_state.get_current_picker(prompt_bufnr)
+                local prompt = picker:_get_prompt()
+                -- live_grep_args: '"pattern" --glob ...' → pattern を抽出
+                local pattern = prompt:match('^"([^"]*)"') or prompt:match("^([^%s]+)") or prompt
+                vim.g.last_grep_pattern = pattern
+                actions.send_to_qflist(prompt_bufnr)
+                actions.open_qflist(prompt_bufnr)
+              end,
             },
           },
           file_ignore_patterns = exclude_patterns,
