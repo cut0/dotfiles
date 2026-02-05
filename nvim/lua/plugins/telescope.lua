@@ -175,10 +175,10 @@ return {
         ".git/",
 
         -- Build outputs
-        "dist",
-        "build",
-        "out",
-        "target",
+        "/dist/",
+        "/build/",
+        "/out/",
+        "/target/",
 
         -- Lock files
         "%.lock",
