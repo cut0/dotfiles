@@ -30,7 +30,7 @@ local function setup_lsp_keymaps(bufnr)
     local symbol_name = vim.fn.expand("<cword>")
 
     vim.lsp.buf_request(0, "textDocument/references", params, function(err, result)
-      if err or not result or vim.tbl_isempty(result) then
+      if err or not result or result == vim.NIL or vim.tbl_isempty(result) then
         vim.notify("No references found", vim.log.levels.INFO)
         return
       end
@@ -119,6 +119,9 @@ local function setup_lsp_keymaps(bufnr)
       local actions = require("telescope.actions")
       local action_state = require("telescope.actions.state")
 
+      -- typeahead をクリア（<S-CR> のエスケープシーケンス残留防止）
+      vim.api.nvim_feedkeys("", "n", true)
+
       pickers.new({}, {
         prompt_title = "References",
         finder = finders.new_table({
@@ -140,7 +143,11 @@ local function setup_lsp_keymaps(bufnr)
           actions.select_default:replace(function()
             local entry = action_state.get_selected_entry()
             actions.close(prompt_bufnr)
-            utils.open_in_target_window(entry.filename, entry.lnum, entry.col)
+            if entry.filename ~= current_file then
+              utils.open_in_target_window(entry.filename, entry.lnum, entry.col)
+            else
+              vim.api.nvim_win_set_cursor(0, { entry.lnum, entry.col - 1 })
+            end
           end)
           return true
         end,
@@ -148,18 +155,23 @@ local function setup_lsp_keymaps(bufnr)
     end)
   end
 
-  -- ターゲットウィンドウに開くカスタムアクション
+  -- ターゲットウィンドウに開くカスタムアクション（別ファイルの場合のみ）
   local function make_lsp_picker_with_target_window(picker_fn, picker_opts)
     return function()
       local actions = require("telescope.actions")
       local action_state = require("telescope.actions.state")
+      local current_file = vim.api.nvim_buf_get_name(0)
 
       picker_fn(vim.tbl_extend("force", picker_opts or {}, {
         attach_mappings = function(prompt_bufnr, _)
           actions.select_default:replace(function()
             local entry = action_state.get_selected_entry()
             actions.close(prompt_bufnr)
-            utils.open_in_target_window(entry.filename, entry.lnum, entry.col)
+            if entry.filename ~= current_file then
+              utils.open_in_target_window(entry.filename, entry.lnum, entry.col)
+            else
+              vim.api.nvim_win_set_cursor(0, { entry.lnum, entry.col - 1 })
+            end
           end)
           return true
         end,
@@ -168,10 +180,10 @@ local function setup_lsp_keymaps(bufnr)
   end
 
   -- 定義・参照ジャンプ
-  keymap("n", "<leader>i", make_lsp_picker_with_target_window(telescope.lsp_implementations), opts("Go to implementation"))
-  keymap("n", "<leader><CR>", make_lsp_picker_with_target_window(telescope.lsp_definitions), opts("Go to definition"))
+  keymap("n", "<leader>i", make_lsp_picker_with_target_window(telescope.lsp_implementations, { jump_type = "never" }), opts("Go to implementation"))
+  keymap("n", "<leader><CR>", make_lsp_picker_with_target_window(telescope.lsp_definitions, { jump_type = "never" }), opts("Go to definition"))
   keymap("n", "<leader><S-CR>", lsp_references_unique_files, opts("Show references (unique files)"))
-  keymap("n", "<leader><A-CR>", make_lsp_picker_with_target_window(telescope.lsp_type_definitions), opts("Go to type definition"))
+  keymap("n", "<leader><A-CR>", make_lsp_picker_with_target_window(telescope.lsp_type_definitions, { jump_type = "never" }), opts("Go to type definition"))
 
   -- リネーム
   keymap("n", "<leader>rn", vim.lsp.buf.rename, opts("Rename symbol"))
@@ -202,21 +214,6 @@ end
 --------------------------------------------------------------------------------
 -- LSP Server Configuration
 --------------------------------------------------------------------------------
-
-local function setup_servers()
-  vim.lsp.config("*", {
-    root_markers = { ".git" },
-  })
-
-  vim.lsp.enable({
-    "ts_ls",
-    "denols",
-    "biome",
-    "gopls",
-    "lua_ls",
-    "eslint",
-  })
-end
 
 --------------------------------------------------------------------------------
 -- LSP Attach Handler
@@ -289,7 +286,6 @@ end
 --------------------------------------------------------------------------------
 
 function M.setup()
-  setup_servers()
   setup_attach_handler()
   setup_diagnostics()
 end

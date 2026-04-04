@@ -86,6 +86,7 @@ asdf install
 ln -s ~/repos/private/dotfiles/.zshrc ~/.zshrc
 ln -s ~/repos/private/dotfiles/nvim ~/.config/nvim
 ln -s ~/repos/private/dotfiles/wezterm ~/.config/wezterm
+ln -s ~/repos/private/dotfiles/lazygit/config.yml ~/.config/lazygit/config.yml
 ```
 
 ## アーキテクチャと設計方針

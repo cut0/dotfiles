@@ -31,3 +31,5 @@ opt.pumheight = 10
 opt.shortmess:append("c")
 
 opt.cmdheight = 0
+
+opt.autoread = true

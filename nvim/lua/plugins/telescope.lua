@@ -37,6 +37,10 @@ return {
                 save_input(prompt_bufnr)
                 actions.close(prompt_bufnr)
               end)
+              map("i", "<CR>", function()
+                save_input(prompt_bufnr)
+                actions.select_default(prompt_bufnr)
+              end)
               return true
             end,
           })
@@ -160,6 +164,62 @@ return {
       local actions = require("telescope.actions")
 
       --------------------------------------------------------------------------
+      -- Status Text: show match count and file count
+      --------------------------------------------------------------------------
+
+      local function count_unique_files(picker)
+        if not picker.manager then
+          return 0
+        end
+        local seen = {}
+        local count = 0
+        for entry in picker.manager:iter() do
+          local fname = entry.filename or (type(entry.value) == "string" and entry.value) or nil
+          if fname and not seen[fname] then
+            seen[fname] = true
+            count = count + 1
+          end
+        end
+        return count
+      end
+
+      local function custom_get_status_text(self, opts)
+        local strings = require("plenary.strings")
+        local showing_cnt = (self.stats.processed or 0) - (self.stats.filtered or 0)
+        local total_cnt = self.stats.processed or 0
+        local multi_select_cnt = #(self:get_multi_selection())
+
+        local status_icon = (opts and not opts.completed) and "* " or ""
+
+        if showing_cnt == 0 and total_cnt == 0 then
+          return status_icon
+        end
+
+        local file_count = count_unique_files(self)
+
+        local status_text
+        if multi_select_cnt > 0 then
+          status_text = string.format("%s%d sel / %d (%d files) / %d", status_icon, multi_select_cnt, showing_cnt, file_count, total_cnt)
+        else
+          status_text = string.format("%s%d (%d files) / %d", status_icon, showing_cnt, file_count, total_cnt)
+        end
+
+        local prompt_width = vim.api.nvim_win_get_width(self.prompt_win)
+        local cursor_col = vim.api.nvim_win_get_cursor(self.prompt_win)[2]
+        local prefix_display_width = strings.strdisplaywidth(self.prompt_prefix)
+        local prefix_width = #self.prompt_prefix
+        local prefix_shift = 0
+        if prefix_display_width ~= prefix_width then
+          prefix_shift = prefix_display_width
+        end
+
+        if (prompt_width - cursor_col - #status_text + prefix_shift) < 0 then
+          return ""
+        end
+        return status_text
+      end
+
+      --------------------------------------------------------------------------
       -- Search Patterns Configuration (VSCode-like)
       --------------------------------------------------------------------------
 
@@ -172,7 +232,7 @@ return {
         "__pycache__",
 
         -- Version Control
-        ".git/",
+        "%.git/",
 
         -- Build outputs
         "/dist/",
@@ -208,6 +268,7 @@ return {
 
       telescope.setup({
         defaults = {
+          get_status_text = custom_get_status_text,
           sorting_strategy = "ascending",
           layout_config = {
             horizontal = {
@@ -241,6 +302,12 @@ return {
         pickers = {
           find_files = {
             hidden = true,
+          },
+          live_grep = {
+            additional_args = { "--hidden" },
+          },
+          grep_string = {
+            additional_args = { "--hidden" },
           },
           lsp_references = { show_line = false },
           lsp_definitions = { show_line = false },

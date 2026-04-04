@@ -6,7 +6,7 @@ local general = augroup("General", { clear = true })
 autocmd("TextYankPost", {
   group = general,
   callback = function()
-    vim.highlight.on_yank({ higroup = "IncSearch", timeout = 200 })
+    vim.hl.on_yank({ higroup = "IncSearch", timeout = 200 })
   end,
   desc = "Highlight yanked text",
 })
@@ -59,12 +59,28 @@ autocmd("BufWritePre", {
   desc = "Create directory if it doesn't exist",
 })
 
-autocmd("WinClosed", {
+autocmd({ "WinClosed", "VimResized" }, {
   group = general,
   callback = function()
     vim.schedule(function()
       vim.cmd("wincmd =")
     end)
   end,
-  desc = "Equalize window sizes after closing",
+  desc = "Equalize window sizes after closing or resizing",
+})
+
+autocmd({ "FocusGained", "BufEnter", "CursorHold" }, {
+  group = general,
+  command = "silent! checktime",
+  desc = "Reload file when changed externally",
+})
+
+vim.treesitter.language.register("tsx", "typescriptreact")
+
+autocmd("FileType", {
+  group = general,
+  callback = function()
+    pcall(vim.treesitter.start)
+  end,
+  desc = "Enable treesitter highlighting",
 })

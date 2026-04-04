@@ -35,6 +35,10 @@ dist/
 .settings/
 *.sublime-workspace
 
+# Treesitter (install-parsers.sh で生成)
+nvim/parser/
+nvim/queries/
+
 # Mac system files
 .DS_Store
 

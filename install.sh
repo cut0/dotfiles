@@ -34,4 +34,10 @@ ln -sf "$DOTFILES_DIR/starship.toml" ~/.config/starship.toml
 echo "==> Installing Homebrew packages..."
 brew bundle --file="$DOTFILES_DIR/Brewfile"
 
+echo "==> Installing terminfo..."
+tic -x -o ~/.terminfo "$DOTFILES_DIR/wezterm/wezterm.terminfo"
+
+echo "==> Installing treesitter parsers..."
+"$DOTFILES_DIR/nvim/scripts/install-parsers.sh"
+
 echo "==> Done!"

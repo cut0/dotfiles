@@ -2,7 +2,6 @@
 node = "latest"
 deno = "latest"
 go = "latest"
-"npm:@anthropic-ai/claude-code" = "latest"
 "npm:wrangler" = "latest"
 
 [settings]

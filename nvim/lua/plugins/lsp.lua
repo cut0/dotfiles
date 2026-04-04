@@ -1,7 +1,7 @@
 return {
   {
     "williamboman/mason.nvim",
-    cmd = "Mason",
+    lazy = false,
     build = ":MasonUpdate",
     opts = {
       ui = {
@@ -12,33 +12,5 @@ return {
         },
       },
     },
-  },
-  {
-    "williamboman/mason-lspconfig.nvim",
-    dependencies = {
-      "williamboman/mason.nvim",
-    },
-    opts = {
-      ensure_installed = {
-        "ts_ls",
-        "biome",
-        "gopls",
-        "lua_ls",
-        "denols",
-        "eslint",
-      },
-      automatic_installation = true,
-    },
-  },
-  {
-    "neovim/nvim-lspconfig",
-    event = { "BufReadPre", "BufNewFile" },
-    dependencies = {
-      "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
-    },
-    config = function()
-      require("lsp_setup").setup()
-    end,
   },
 }

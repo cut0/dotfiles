@@ -42,7 +42,7 @@ function M.get_target_window()
   end
 
   local target_n
-  if n == 1 or n % 2 == 0 then
+  if n % 2 == 1 then
     target_n = n + 1
   else
     target_n = n - 1
@@ -64,6 +64,37 @@ function M.open_in_target_window(filename, lnum, col)
   vim.cmd("edit " .. vim.fn.fnameescape(filename))
   if lnum then
     vim.api.nvim_win_set_cursor(target_win, { lnum, (col or 1) - 1 })
+  end
+end
+
+-- バッファを隣のエディタウィンドウに移動
+function M.move_buffer_to_direction(direction) -- "l" = right, "h" = left
+  local editor_wins = M.get_editor_windows()
+  local cur_win = vim.api.nvim_get_current_win()
+
+  local cur_idx
+  for i, win in ipairs(editor_wins) do
+    if win == cur_win then cur_idx = i; break end
+  end
+  if not cur_idx then return end
+
+  local target_idx = direction == "l" and cur_idx + 1 or cur_idx - 1
+  if target_idx < 1 or target_idx > #editor_wins then return end
+
+  local target_win = editor_wins[target_idx]
+  local cur_buf = vim.api.nvim_win_get_buf(cur_win)
+
+  -- 移動先にバッファをセット（:buffer で alternate を正しく設定）
+  vim.fn.win_execute(target_win, "buffer " .. cur_buf)
+
+  -- 移動元を前のバッファに戻す
+  vim.fn.win_execute(cur_win, "buffer #")
+  if vim.api.nvim_win_get_buf(cur_win) == cur_buf then
+    vim.fn.win_execute(cur_win, "bprevious")
+    if vim.api.nvim_win_get_buf(cur_win) == cur_buf then
+      vim.api.nvim_win_close(cur_win, false)
+      vim.api.nvim_set_current_win(target_win)
+    end
   end
 end
 

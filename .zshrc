@@ -65,18 +65,4 @@ source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 eval "$(mise activate zsh)"
 
-# ====================
-# nvim を新しいタブで開く
-# ====================
-nvim() {
-  if [[ -n "$WEZTERM_PANE" ]]; then
-    local project_name="${PWD##*/}"
-    local pane_id
-    pane_id=$(wezterm cli spawn --cwd "$(pwd)" -- nvim "$@")
-    if [[ -n "$pane_id" ]]; then
-      wezterm cli set-tab-title --pane-id "$pane_id" "$project_name"
-    fi
-  else
-    command nvim "$@"
-  fi
-}
+export PATH="$HOME/.local/bin:$PATH"

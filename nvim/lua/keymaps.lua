@@ -27,14 +27,12 @@ keymap("v", "c", '"_c', { noremap = true })
 -- ビジュアルモードでのコピー時に位置を保持
 keymap("x", "y", "mzy`z", { noremap = true })
 
--- ビジュアルモードで I を押すと全行の先頭に挿入（V でも Ctrl+V と同じ動作）
-keymap("x", "I", "<C-v>0oI", { noremap = true })
-
 -- Redo を U に割り当て
 keymap("n", "U", "<C-r>", { noremap = true })
 
--- Insert mode: jj で Normal mode へ
+-- jj で Normal mode へ
 keymap("i", "jj", "<Esc>", { noremap = true, silent = true })
+keymap("t", "jj", [[<C-\><C-n>]], { noremap = true, silent = true })
 
 --------------------------------------------------------------------------------
 -- Editor Commands
@@ -70,6 +68,12 @@ keymap("n", "<leader>\\", function()
   vim.cmd("botright vnew")
   vim.cmd("wincmd =")
 end, { noremap = true, silent = true, desc = "Add new editor window" })
+
+-- バッファを隣のエディタウィンドウに移動
+keymap("n", "<leader><S-Right>", function() utils.move_buffer_to_direction("l") end,
+  { noremap = true, silent = true, desc = "Move buffer to right window" })
+keymap("n", "<leader><S-Left>", function() utils.move_buffer_to_direction("h") end,
+  { noremap = true, silent = true, desc = "Move buffer to left window" })
 
 -- Neovim を終了
 keymap("n", "<leader>Q", "<cmd>qa<CR>", { noremap = true, silent = true, desc = "Quit Neovim" })

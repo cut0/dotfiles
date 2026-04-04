@@ -16,7 +16,8 @@ return {
   --------------------------------------------------------------------------------
   initial_cols = 190,
   initial_rows = 60,
-  window_background_opacity = 0.90,
+  window_background_opacity = 0.85,
+  macos_window_background_blur = 20,
   window_decorations = "RESIZE",
   exit_behavior = "Close",
 
@@ -27,6 +28,7 @@ return {
   tab_bar_at_bottom = true,
   use_fancy_tab_bar = false,
   hide_tab_bar_if_only_one_tab = true,
+  tab_max_width = 32,
 
   --------------------------------------------------------------------------------
   -- Scrollbar
@@ -39,18 +41,18 @@ return {
   color_scheme = "Gruvbox Dark (Gogh)",
 
   colors = {
+    background = "#141617",
     cursor_bg = "#FC802D",
     selection_bg = "#FC802D",
     tab_bar = {
-      background = "#282828",
+      background = "#141617",
       active_tab = {
-        bg_color = "#282828",
+        bg_color = "#d65d0e",
         fg_color = "#ebdbb2",
         intensity = "Bold",
-        underline = "Single",
       },
       inactive_tab = {
-        bg_color = "#282828",
+        bg_color = "#141617",
         fg_color = "#928374",
       },
       inactive_tab_hover = {
@@ -58,7 +60,7 @@ return {
         fg_color = "#ebdbb2",
       },
       new_tab = {
-        bg_color = "#282828",
+        bg_color = "#141617",
         fg_color = "#928374",
       },
       new_tab_hover = {

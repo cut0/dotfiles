@@ -1,10 +1,3 @@
--- jj リポジトリかどうかを検出
-local function is_jj_repo()
-  return vim.fn.finddir(".jj", vim.fn.getcwd() .. ";") ~= ""
-end
-
-local is_jj = is_jj_repo()
-
 return {
   -- インデント・チャンクハイライト
   {
@@ -186,20 +179,10 @@ return {
     },
   },
   {
-    "Cretezy/neo-tree-jj.nvim",
-    cond = is_jj,
-    lazy = false,
-  },
-  {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v3.x",
     lazy = false,
-    dependencies = is_jj and {
-      "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons",
-      "MunifTanjim/nui.nvim",
-      "Cretezy/neo-tree-jj.nvim",
-    } or {
+    dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-tree/nvim-web-devicons",
       "MunifTanjim/nui.nvim",
@@ -218,18 +201,14 @@ return {
     },
     config = function()
       require("neo-tree").setup({
-        sources = is_jj and {
+        sources = {
           "filesystem",
-          "jj",
-        } or {
-          "filesystem",
+          "buffers",
+          "git_status",
         },
         source_selector = {
           winbar = true,
-          sources = is_jj and {
-            { source = "filesystem", display_name = " Files" },
-            { source = "jj", display_name = "󰊢 JJ" },
-          } or {
+          sources = {
             { source = "filesystem", display_name = " Files" },
           },
         },
@@ -254,6 +233,9 @@ return {
           folder_empty = "",
           default = "",
         },
+        file_size = {
+          enabled = true,
+        },
         modified = {
           symbol = "●",
         },
@@ -273,7 +255,7 @@ return {
       },
       window = {
         position = "left",
-        width = 30,
+        width = 50,
         mapping_options = {
           noremap = true,
           nowait = true,
@@ -306,6 +288,7 @@ return {
           ["x"] = "cut_to_clipboard",
           ["p"] = "paste_from_clipboard",
           ["q"] = "close_window",
+          ["E"] = "expand_all_nodes",
           ["R"] = "refresh",
         },
       },
@@ -318,23 +301,26 @@ return {
         },
         follow_current_file = { enabled = true },
         group_empty_dirs = true,
-      },
-      jj = {
-        window = {
-          position = "left",
-          mappings = {
-            ["o"] = "open",
-            ["oc"] = "none",
-            ["od"] = "none",
-            ["og"] = "none",
-            ["om"] = "none",
-            ["on"] = "none",
-            ["os"] = "none",
-            ["ot"] = "none",
+        renderers = {
+          file = {
+            { "indent" },
+            { "icon" },
+            { "name", use_git_status_colors = true },
+            { "modified", zindex = 20, align = "right" },
+            { "git_status", zindex = 20, align = "right" },
+            { "file_size", zindex = 10, align = "right" },
           },
         },
       },
       })
+    end,
+  },
+  -- 対応するカッコ・タグへのジャンプ拡張
+  {
+    "andymass/vim-matchup",
+    event = "VeryLazy",
+    init = function()
+      vim.g.matchup_matchparen_offscreen = { method = "popup" }
     end,
   },
   -- マルチカーソル
