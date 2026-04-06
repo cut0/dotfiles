@@ -15,10 +15,10 @@ return {
     },
     opts = {
       formatters_by_ft = {
-        javascript = { "biome", "prettierd", "prettier", stop_after_first = true },
-        javascriptreact = { "biome", "prettierd", "prettier", stop_after_first = true },
-        typescript = { "biome", "prettierd", "prettier", stop_after_first = true },
-        typescriptreact = { "biome", "prettierd", "prettier", stop_after_first = true },
+        javascript = { "oxformat", "biome", "prettierd", "prettier", stop_after_first = true },
+        javascriptreact = { "oxformat", "biome", "prettierd", "prettier", stop_after_first = true },
+        typescript = { "oxformat", "biome", "prettierd", "prettier", stop_after_first = true },
+        typescriptreact = { "oxformat", "biome", "prettierd", "prettier", stop_after_first = true },
         json = { "biome", "prettierd", "prettier", stop_after_first = true },
         jsonc = { "biome", "prettierd", "prettier", stop_after_first = true },
 
@@ -37,6 +37,12 @@ return {
       },
       formatters = {
         biome = {
+          require_cwd = true,
+        },
+        oxformat = {
+          command = "oxformat",
+          args = { "--stdin-filepath", "$FILENAME" },
+          stdin = true,
           require_cwd = true,
         },
       },

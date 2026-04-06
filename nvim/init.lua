@@ -17,5 +17,6 @@ if not vim.g.vscode then
     "gopls",
     "lua_ls",
     "eslint",
+    "oxlint",
   })
 end

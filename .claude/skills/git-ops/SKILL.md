@@ -12,14 +12,13 @@ description: |
 
 - ベースブランチ: 指定がない場合は `main` を使用
 - 最新から分岐: 常に最新のベースブランチから分岐
-- 命名規則: `feature/{task-description}`
 
 ## ブランチ作成手順
 
 ```bash
 git checkout main
 git pull --rebase origin main
-git checkout -b feature/{branch-name}
+git checkout -b <branch-name>
 ```
 
 ## コミットルール
@@ -28,8 +27,6 @@ git checkout -b feature/{branch-name}
 
 ```
 <type>: <description>
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 - コミットメッセージ・PR タイトル・PR 本文の記述言語はプロジェクトの `CLAUDE.md` の指定に従う
@@ -45,10 +42,6 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 | `test` | テスト関連 |
 | `docs` | ドキュメントのみ |
 | `chore` | その他のメンテナンス |
-
-### Co-Author
-
-- コミットには必ず Co-Authored-By を追加
 
 ## コミット・プッシュ・PR 作成前の確認事項
 
@@ -95,3 +88,56 @@ git diff --stat
 
 - 未コミットの変更がある場合、PR に含めるべきか、除外すべきかをユーザーに確認する
 - ステージングされていない変更が意図せず PR に漏れることを防ぐ
+
+## コミット → プッシュ → PR 作成ワークフロー
+
+### 1. 変更内容の確認
+
+```bash
+git status
+git diff
+git diff --staged
+```
+
+- 変更内容の要約をユーザーに提示し、コミットメッセージを提案する
+- すでにマージ済みのブランチで作業している場合は、新たにブランチを切る
+
+### 2. ステージングとコミット
+
+```bash
+git add -A
+git commit -m "<type>: <簡潔な説明>"
+```
+
+### 3. プッシュ
+
+```bash
+git push -u origin $(git branch --show-current)
+```
+
+### 4. PR 作成
+
+```bash
+# プロジェクトの PR テンプレートを使用
+gh pr create --title "<コミットメッセージと同じタイトル>"
+
+# ドラフトの場合
+gh pr create --draft
+```
+
+- `.github/pull_request_template.md` がある場合はそのテンプレートを使用する
+- テンプレートがない場合のみ手動で本文を作成
+
+### 5. PR 作成後の CI 確認
+
+```bash
+# CI のステータスを確認（完了するまで待機）
+gh pr checks --watch
+
+# fail した場合は詳細を確認
+gh run view <run-id> --log-failed
+```
+
+- PR 作成後、CI が success または fail になるまで必ず確認する
+- fail した場合は原因を修正し、再度コミット・プッシュする
+- すべての CI チェックが pass するまでこのサイクルを繰り返す
