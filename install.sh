@@ -21,6 +21,10 @@ ln -sf "$DOTFILES_DIR/wezterm" ~/.config/wezterm
 # Tmux
 ln -sf "$DOTFILES_DIR/tmux/.tmux.conf" ~/.tmux.conf
 
+# Claude Code
+mkdir -p ~/.claude
+ln -sf "$DOTFILES_DIR/.claude/statusline-command.sh" ~/.claude/statusline-command.sh
+
 # Git
 ln -sf "$DOTFILES_DIR/.gitconfig" ~/.gitconfig
 

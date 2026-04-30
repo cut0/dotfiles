@@ -1,148 +1,9 @@
 {
-  "alwaysThinkingEnabled" : true,
-  "enabledPlugins" : {
-    "gopls-lsp@claude-plugins-official" : true,
-    "typescript-lsp@claude-plugins-official" : true
+  "env": {
+    "ENABLE_TOOL_SEARCH": "true"
   },
-  "env" : {
-    "ENABLE_TOOL_SEARCH" : "true"
-  },
-  "hooks" : {
-    "Notification" : [
-      {
-        "hooks" : [
-          {
-            "command" : "afplay \/System\/Library\/Sounds\/Hero.aiff",
-            "type" : "command"
-          }
-        ],
-        "matcher" : ""
-      }
-    ],
-    "PermissionRequest" : [
-      {
-        "hooks" : [
-          {
-            "command" : "~\/.claude\/hooks\/notchi-hook.sh",
-            "type" : "command"
-          }
-        ],
-        "matcher" : "*"
-      }
-    ],
-    "PostToolUse" : [
-      {
-        "hooks" : [
-          {
-            "command" : "~\/.claude\/hooks\/notchi-hook.sh",
-            "type" : "command"
-          }
-        ],
-        "matcher" : "*"
-      }
-    ],
-    "PreCompact" : [
-      {
-        "hooks" : [
-          {
-            "command" : "~\/.claude\/hooks\/notchi-hook.sh",
-            "type" : "command"
-          }
-        ],
-        "matcher" : "auto"
-      },
-      {
-        "hooks" : [
-          {
-            "command" : "~\/.claude\/hooks\/notchi-hook.sh",
-            "type" : "command"
-          }
-        ],
-        "matcher" : "manual"
-      }
-    ],
-    "PreToolUse" : [
-      {
-        "hooks" : [
-          {
-            "command" : "afplay \/System\/Library\/Sounds\/Pop.aiff",
-            "type" : "command"
-          }
-        ],
-        "matcher" : "*"
-      },
-      {
-        "hooks" : [
-          {
-            "command" : "~\/.claude\/hooks\/notchi-hook.sh",
-            "type" : "command"
-          }
-        ],
-        "matcher" : "*"
-      }
-    ],
-    "SessionEnd" : [
-      {
-        "hooks" : [
-          {
-            "command" : "~\/.claude\/hooks\/notchi-hook.sh",
-            "type" : "command"
-          }
-        ]
-      }
-    ],
-    "SessionStart" : [
-      {
-        "hooks" : [
-          {
-            "command" : "~\/.claude\/hooks\/notchi-hook.sh",
-            "type" : "command"
-          }
-        ]
-      }
-    ],
-    "Stop" : [
-      {
-        "hooks" : [
-          {
-            "command" : "afplay \/System\/Library\/Sounds\/Glass.aiff",
-            "type" : "command"
-          }
-        ]
-      },
-      {
-        "hooks" : [
-          {
-            "command" : "~\/.claude\/hooks\/notchi-hook.sh",
-            "type" : "command"
-          }
-        ]
-      }
-    ],
-    "SubagentStop" : [
-      {
-        "hooks" : [
-          {
-            "command" : "~\/.claude\/hooks\/notchi-hook.sh",
-            "type" : "command"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit" : [
-      {
-        "hooks" : [
-          {
-            "command" : "~\/.claude\/hooks\/notchi-hook.sh",
-            "type" : "command"
-          }
-        ]
-      }
-    ]
-  },
-  "language" : "japanese",
-  "permissions" : {
-    "allow" : [
+  "permissions": {
+    "allow": [
       "Bash",
       "Edit",
       "Write",
@@ -150,25 +11,191 @@
       "TodoWrite",
       "WebSearch",
       "WebFetch",
-      "mcp__pencil"
+      "mcp__pencil",
+      "mcp__chrome-devtools__take_screenshot",
+      "mcp__chrome-devtools__take_snapshot",
+      "mcp__chrome-devtools__list_network_requests",
+      "mcp__chrome-devtools__list_pages",
+      "mcp__chrome-devtools__get_network_request",
+      "Bash(git push:*)"
     ],
-    "ask" : [
-      "Bash(git push:*)",
-      "Bash(git switch:*)",
-      "Bash(git stash:*)",
-      "Bash(rm:*)"
+    "deny": [],
+    "ask": [
+      "Bash(git push origin main)",
+      "Bash(git push origin main:*)",
+      "Bash(git push -u origin main)",
+      "Bash(git push -u origin main:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean -f:*)",
+      "Bash(git clean -fd:*)",
+      "Bash(git branch -D:*)",
+      "Bash(rm -rf:*)"
     ],
-    "defaultMode" : "default",
-    "deny" : [
-
+    "defaultMode": "auto"
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Hero.aiff"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notchi-hook.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notchi-hook.sh"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notchi-hook.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "manual",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notchi-hook.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Pop.aiff"
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notchi-hook.sh"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notchi-hook.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notchi-hook.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Glass.aiff"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notchi-hook.sh"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notchi-hook.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notchi-hook.sh"
+          }
+        ]
+      }
     ]
   },
-  "skipDangerousModePermissionPrompt" : true,
-  "spinnerVerbs" : {
-    "mode" : "replace",
-    "verbs" : [
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "figma@claude-plugins-official": true,
+    "gopls-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "a11y-specialist-skills": {
+      "source": {
+        "source": "github",
+        "repo": "masuP9/a11y-specialist-skills"
+      }
+    }
+  },
+  "language": "japanese",
+  "spinnerVerbs": {
+    "mode": "replace",
+    "verbs": [
       "ろーでぃんぐ"
     ]
   },
-  "voiceEnabled" : true
+  "alwaysThinkingEnabled": true,
+  "skipDangerousModePermissionPrompt": true,
+  "editorMode": "vim",
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "voiceEnabled": true
 }
