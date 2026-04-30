@@ -8,6 +8,25 @@ local appearance = require("appearance")
 -- Events
 --------------------------------------------------------------------------------
 
+-- 現在のモードを右下ステータスに表示
+wezterm.on("update-status", function(window, pane)
+  local name = window:active_key_table()
+  local mode = { label = "NORMAL", bg = "#458588", fg = "#141617" }
+  if name == "copy_mode" then
+    mode = { label = "COPY", bg = "#d79921", fg = "#141617" }
+  elseif name == "search_mode" then
+    mode = { label = "SEARCH", bg = "#98971a", fg = "#141617" }
+  end
+
+  window:set_right_status(wezterm.format({
+    { Background = { Color = mode.bg } },
+    { Foreground = { Color = mode.fg } },
+    { Text = " " .. mode.label .. " " },
+    "ResetAttributes",
+    { Text = " " },
+  }))
+end)
+
 wezterm.on("format-tab-title", function(tab, tabs)
   -- ディレクトリ名を取得
   local cwd_uri = tab.active_pane.current_working_dir

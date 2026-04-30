@@ -7,11 +7,11 @@ return {
   -- Copy Mode (Vim-like navigation)
   --------------------------------------------------------------------------------
   copy_mode = {
-    -- Exit
-    { key = "Escape", mods = "NONE", action = act.CopyMode("Close") },
-    { key = "q", mods = "NONE", action = act.CopyMode("Close") },
-    { key = "c", mods = "CTRL", action = act.CopyMode("Close") },
-    { key = "g", mods = "CTRL", action = act.CopyMode("Close") },
+    -- Exit (Copy Mode 終了は Cmd+J のみ)
+    { key = "j", mods = "SUPER", action = act.CopyMode("Close") },
+
+    -- 選択解除 (Copy Mode には留まる)
+    { key = "Escape", mods = "NONE", action = act.CopyMode("ClearSelectionMode") },
 
     -- Selection
     { key = "Space", mods = "NONE", action = act.CopyMode({ SetSelectionMode = "Cell" }) },
@@ -46,7 +46,11 @@ return {
     { key = "LeftArrow", mods = "ALT", action = act.CopyMode("MoveBackwardWord") },
     { key = "RightArrow", mods = "ALT", action = act.CopyMode("MoveForwardWord") },
 
-    -- Line Movement
+    -- Line Movement (nvim の H/L = 行頭/行末 に合わせる)
+    { key = "H", mods = "NONE", action = act.CopyMode("MoveToStartOfLine") },
+    { key = "H", mods = "SHIFT", action = act.CopyMode("MoveToStartOfLine") },
+    { key = "L", mods = "NONE", action = act.CopyMode("MoveToEndOfLineContent") },
+    { key = "L", mods = "SHIFT", action = act.CopyMode("MoveToEndOfLineContent") },
     { key = "0", mods = "NONE", action = act.CopyMode("MoveToStartOfLine") },
     { key = "$", mods = "NONE", action = act.CopyMode("MoveToEndOfLineContent") },
     { key = "$", mods = "SHIFT", action = act.CopyMode("MoveToEndOfLineContent") },
@@ -67,14 +71,6 @@ return {
     { key = "f", mods = "CTRL", action = act.CopyMode("PageDown") },
     { key = "u", mods = "CTRL", action = act.CopyMode({ MoveByPage = -0.5 }) },
     { key = "d", mods = "CTRL", action = act.CopyMode({ MoveByPage = 0.5 }) },
-
-    -- Viewport Movement
-    { key = "H", mods = "NONE", action = act.CopyMode("MoveToViewportTop") },
-    { key = "H", mods = "SHIFT", action = act.CopyMode("MoveToViewportTop") },
-    { key = "M", mods = "NONE", action = act.CopyMode("MoveToViewportMiddle") },
-    { key = "M", mods = "SHIFT", action = act.CopyMode("MoveToViewportMiddle") },
-    { key = "L", mods = "NONE", action = act.CopyMode("MoveToViewportBottom") },
-    { key = "L", mods = "SHIFT", action = act.CopyMode("MoveToViewportBottom") },
 
     -- Selection Toggle
     { key = "o", mods = "NONE", action = act.CopyMode("MoveToSelectionOtherEnd") },
