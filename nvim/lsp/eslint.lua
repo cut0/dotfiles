@@ -4,6 +4,10 @@ return {
   root_markers = { ".eslintrc", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json", ".eslintrc.yaml", ".eslintrc.yml", "eslint.config.js", "eslint.config.mjs", "eslint.config.cjs" },
   workspace_required = true,
   settings = {
+    useFlatConfig = true,
+    experimental = {
+      useFlatConfig = true,
+    },
     codeAction = {
       disableRuleComment = {
         enable = true,
