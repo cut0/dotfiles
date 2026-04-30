@@ -39,6 +39,13 @@ dist/
 nvim/parser/
 nvim/queries/
 
+# XDG_CONFIG_HOME=. 等で起動した際に生成される入れ子ディレクトリ
+/nvim/nvim
+/wezterm/wezterm
+
+# Claude Code worktrees
+.claude/worktrees/
+
 # Mac system files
 .DS_Store
 
