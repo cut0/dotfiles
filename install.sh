@@ -18,6 +18,9 @@ ln -sf "$DOTFILES_DIR/nvim" ~/.config/nvim
 # WezTerm
 ln -sf "$DOTFILES_DIR/wezterm" ~/.config/wezterm
 
+# Tmux
+ln -sf "$DOTFILES_DIR/tmux/.tmux.conf" ~/.tmux.conf
+
 # Git
 ln -sf "$DOTFILES_DIR/.gitconfig" ~/.gitconfig
 
