@@ -31,6 +31,31 @@ local function build_grid(tab, cols, rows)
   return all_panes
 end
 
+-- 左半分を left_cols × left_rows のグリッド、右半分を1ペインで構築
+local function build_left_grid_right_single(tab, left_cols, left_rows)
+  local first = tab:panes_with_info()[1].pane
+
+  -- まず右半分を作成（左右 50:50）
+  first:split({ direction = "Right", size = 0.5 })
+
+  -- 左半分を left_cols 列に分割
+  local col_panes = { first }
+  for i = 1, left_cols - 1 do
+    local size = (left_cols - i) / (left_cols - i + 1)
+    local new_pane = col_panes[#col_panes]:split({ direction = "Right", size = size })
+    table.insert(col_panes, new_pane)
+  end
+
+  -- 各列を left_rows 行に分割
+  for _, cp in ipairs(col_panes) do
+    local current = cp
+    for i = 1, left_rows - 1 do
+      local size = (left_rows - i) / (left_rows - i + 1)
+      current = current:split({ direction = "Bottom", size = size })
+    end
+  end
+end
+
 -- タブ内のペインを全て閉じて1ペインに戻す
 local function collapse_to_single(window, tab)
   while #tab:panes_with_info() > 1 do
@@ -249,6 +274,8 @@ local keys = {
         { label = "3x3 (3列3行)", id = "3x3" },
         { label = "4x2 (4列2行)", id = "4x2" },
         { label = "4x4 (4列4行)", id = "4x4" },
+        { label = "左2x1 + 右1 (3ペイン)", id = "left2x1_right1" },
+        { label = "左2x2 + 右1 (5ペイン)", id = "left2x2_right1" },
       },
       action = wezterm.action_callback(function(window, pane, id, label)
         if not id then
@@ -260,10 +287,19 @@ local keys = {
           return
         end
 
+        local tab = window:active_tab()
+
+        local left_cols, left_rows = id:match("^left(%d+)x(%d+)_right1$")
+        if left_cols then
+          collapse_to_single(window, tab)
+          build_left_grid_right_single(tab, tonumber(left_cols), tonumber(left_rows))
+          tab:panes_with_info()[1].pane:activate()
+          return
+        end
+
         local cols, rows = id:match("^(%d+)x(%d+)$")
         cols, rows = tonumber(cols), tonumber(rows)
 
-        local tab = window:active_tab()
         collapse_to_single(window, tab)
         build_grid(tab, cols, rows)
         tab:panes_with_info()[1].pane:activate()
