@@ -15,7 +15,6 @@ setopt PROMPT_SUBST        # プロンプトで変数展開
 # 環境変数
 # ====================
 export GOPATH=$HOME/go
-export ANDROID_HOME=$HOME/Library/Android/sdk
 export BUN_INSTALL=$HOME/.bun
 
 export GIT_EDITOR=nvim
@@ -29,9 +28,6 @@ path=(
   /opt/homebrew/bin
   /opt/homebrew/share/google-cloud-sdk/bin
   $GOPATH/bin
-  $ANDROID_HOME/tools
-  $ANDROID_HOME/tools/bin
-  $ANDROID_HOME/platform-tools
   $BUN_INSTALL/bin
   $HOME/Library/pnpm
   $HOME/.pub-cache/bin
@@ -66,3 +62,4 @@ source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 eval "$(mise activate zsh)"
 
 export PATH="$HOME/.local/bin:$PATH"
+eval "$(direnv hook zsh)"
