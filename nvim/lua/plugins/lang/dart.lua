@@ -1,10 +1,11 @@
 return {
   {
     "nvim-flutter/flutter-tools.nvim",
+    version = "v2.2.0",
     lazy = false,
     dependencies = {
       "nvim-lua/plenary.nvim",
-      "stevearc/dressing.nvim",
+      { "stevearc/dressing.nvim", commit = "2d7c2db2507fa3c4956142ee607431ddb2828639" },
     },
     ft = { "dart" },
     config = function()

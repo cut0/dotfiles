@@ -1,9 +1,9 @@
 return {
   {
     "saghen/blink.cmp",
-    version = "*",
+    version = "v1.10.2",
     dependencies = {
-      "rafamadriz/friendly-snippets",
+      { "rafamadriz/friendly-snippets", commit = "6cd7280adead7f586db6fccbd15d2cac7e2188b9" },
     },
     event = "InsertEnter",
     opts = {

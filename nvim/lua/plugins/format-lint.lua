@@ -1,6 +1,7 @@
 return {
   {
     "stevearc/conform.nvim",
+    commit = "086a40dc7ed8242c03be9f47fbcee68699cc2395",
     event = { "BufWritePre" },
     cmd = { "ConformInfo" },
     keys = {
@@ -50,6 +51,7 @@ return {
   },
   {
     "mfussenegger/nvim-lint",
+    commit = "4b03656c09c1561f89b6aa0665c15d292ba9499d",
     event = { "BufReadPre", "BufNewFile" },
     config = function()
       local lint = require("lint")

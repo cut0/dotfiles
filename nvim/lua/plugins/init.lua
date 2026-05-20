@@ -13,6 +13,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
   spec = {
+    { "folke/lazy.nvim", commit = "306a05526ada86a7b30af95c5cc81ffba93fef97" },
     { import = "plugins.colorscheme" },
     { import = "plugins.editor" },
     { import = "plugins.lsp" },

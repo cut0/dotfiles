@@ -2,6 +2,7 @@ return {
   -- インデント・チャンクハイライト
   {
     "shellRaining/hlchunk.nvim",
+    commit = "3bc2bd7aef28fbed6643534a0fdd0f19966544bc",
     event = { "BufReadPre", "BufNewFile" },
     config = function()
       require("hlchunk").setup({
@@ -32,6 +33,7 @@ return {
   -- 検索結果ハイライト強化
   {
     "kevinhwang91/nvim-hlslens",
+    commit = "be2d7b2be01860b5445a007ff2bc72b29896db6b",
     event = "VeryLazy",
     config = function()
       require("hlslens").setup({
@@ -60,6 +62,7 @@ return {
   -- キーバインドヘルプ表示
   {
     "folke/which-key.nvim",
+    commit = "3aab2147e74890957785941f0c1ad87d0a44c15a",
     event = "VeryLazy",
     opts = {
       preset = "helix",
@@ -80,6 +83,7 @@ return {
   },
   {
     "rainbowhxch/accelerated-jk.nvim",
+    commit = "8fb5dad4ccc1811766cebf16b544038aeeb7806f",
     event = "VeryLazy",
     config = function()
       require("accelerated-jk").setup()
@@ -91,6 +95,7 @@ return {
   },
   {
     "nvim-tree/nvim-web-devicons",
+    commit = "40e9d5a6cc3db11b309e39593fc7ac03bb844e38",
     lazy = false,
     opts = {
       override_by_extension = {
@@ -180,12 +185,12 @@ return {
   },
   {
     "nvim-neo-tree/neo-tree.nvim",
-    branch = "v3.x",
+    version = "3.41.0",
     lazy = false,
     dependencies = {
-      "nvim-lua/plenary.nvim",
+      { "nvim-lua/plenary.nvim", commit = "b9fd5226c2f76c951fc8ed5923d85e4de065e509" },
       "nvim-tree/nvim-web-devicons",
-      "MunifTanjim/nui.nvim",
+      { "MunifTanjim/nui.nvim", commit = "de740991c12411b663994b2860f1a4fd0937c130" },
     },
     keys = {
       {
@@ -318,6 +323,7 @@ return {
   -- 対応するカッコ・タグへのジャンプ拡張
   {
     "andymass/vim-matchup",
+    commit = "0fb1e6b7cea34e931a2af50b8ad565c5c4fd8f4d",
     event = "VeryLazy",
     init = function()
       vim.g.matchup_matchparen_offscreen = { method = "popup" }
@@ -326,7 +332,7 @@ return {
   -- マルチカーソル
   {
     "mg979/vim-visual-multi",
-    branch = "master",
+    commit = "a6975e7c1ee157615bbc80fc25e4392f71c344d4",
     event = "VeryLazy",
     init = function()
       vim.g.VM_default_mappings = 1

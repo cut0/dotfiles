@@ -41,7 +41,7 @@ end
 return {
   {
     "echasnovski/mini.bufremove",
-    version = "*",
+    version = "v0.17.0",
     keys = {
       {
         "<leader>x",

@@ -2,6 +2,7 @@ return {
   -- Git diff ビューア
   {
     "sindrets/diffview.nvim",
+    commit = "4516612fe98ff56ae0415a259ff6361a89419b0a",
     cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles", "DiffviewFileHistory" },
     keys = {
       { "<leader>gd", "<cmd>DiffviewOpen<cr>",          desc = "Diffview Open" },
@@ -33,6 +34,7 @@ return {
   -- Git コミットメッセージ表示
   {
     "rhysd/git-messenger.vim",
+    commit = "fd124457378a295a5d1036af4954b35d6b807385",
     cmd = "GitMessenger",
     keys = {
       { "<leader>gm", "<cmd>GitMessenger<cr>", desc = "Git Messenger" },
@@ -45,6 +47,7 @@ return {
   },
   {
     "lewis6991/gitsigns.nvim",
+    commit = "944ef13cc8d8fe8b846c91f36041c8dfb85ca000",
     event = { "BufReadPre", "BufNewFile" },
     config = function()
       require("gitsigns").setup({
@@ -100,6 +103,7 @@ return {
   -- GitHub URL 生成
   {
     "linrongbin16/gitlinker.nvim",
+    commit = "bbe2a1254fc8fce21f3bbf9a020266a1c49799f7",
     cmd = "GitLink",
     keys = {
       { "<leader>gy", "<cmd>GitLink<cr>", mode = { "n", "v" }, desc = "Copy git link" },
@@ -156,6 +160,7 @@ return {
   -- Git blame 表示
   {
     "APZelos/blamer.nvim",
+    commit = "e0d43c11697300eb68f00d69df8b87deb0bf52dc",
     event = { "BufReadPre", "BufNewFile" },
     keys = {
       { "<leader>gb", "<cmd>BlamerToggle<cr>", desc = "Toggle Git Blame" },

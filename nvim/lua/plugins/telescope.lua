@@ -1,18 +1,19 @@
 return {
   {
     "nvim-telescope/telescope.nvim",
-    branch = "master",
+    commit = "cfb85dcf7f822b79224e9e6aef9e8c794211b20b",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-tree/nvim-web-devicons",
       {
         "nvim-telescope/telescope-fzf-native.nvim",
+        commit = "6fea601bd2b694c6f2ae08a6c6fab14930c60e2c",
         build = "make",
         cond = function()
           return vim.fn.executable("make") == 1
         end,
       },
-      { "nvim-telescope/telescope-live-grep-args.nvim" },
+      { "nvim-telescope/telescope-live-grep-args.nvim", commit = "b80ec2c70ec4f32571478b501218c8979fab5201" },
     },
     keys = {
       {
