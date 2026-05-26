@@ -4,6 +4,7 @@ description: |
   AI 向け rules / skills の同期ガイドを提供します。
   Rulesync を正本にした Claude Code / Codex 向け生成物の管理方法を含みます。
 ---
+
 # AI 設定同期ガイド
 
 ## 正本

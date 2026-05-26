@@ -1,100 +1,82 @@
 ---
 name: sync
 description: |
-  スキルや CLAUDE.md の同期ガイドを提供します。
-  グローバルスキルとプロジェクトスキルの管理方法を含みます。
+  AI 向け rules / skills の同期ガイドを提供します。
+  Rulesync を正本にした Claude Code / Codex 向け生成物の管理方法を含みます。
 ---
+# AI 設定同期ガイド
 
-# スキル同期ガイド
-
-## ディレクトリ構成
+## 正本
 
 ```
-~/.claude/skills/           # グローバルスキル（全プロジェクト共通）
-  ├── code-quality/
-  ├── git-ops/
-  ├── go/
-  ├── python/
-  ├── rust/
-  ├── typescript/
-  └── writing/
-
-<project>/.claude/skills/   # プロジェクトスキル（プロジェクト固有）
-  ├── cli/
-  ├── docs/
-  ├── sync/
-  └── typescript/
+.rulesync/
+  ├── rules/
+  │   └── overview.md
+  └── skills/
+      └── <skill>/SKILL.md
+rulesync.jsonc
 ```
 
-## 同期方針
+Claude Code / Codex 共通で使う rules と skills は `.rulesync/` を編集する。
 
-### グローバルからプロジェクトへ
+## 生成物
 
-汎用的なスキルはグローバルに置き、プロジェクトでカスタマイズが必要な場合のみコピー。
+以下は生成物として扱い、直接編集しない。
+
+```
+.agents/skills/
+.claude/skills/
+.codex/skills/
+.claude/CLAUDE.md
+.codex/AGENTS.md
+```
+
+## ツール固有設定
+
+以下はスキーマが異なるため手で管理する。
+
+- `.claude/settings.json`
+- `.claude/statusline-command.sh`
+- `.claude/agents/`
+- `.codex/config.toml`
+
+## 同期
+
+Rulesync で生成物を更新する。
 
 ```bash
-# グローバルスキルをプロジェクトにコピー
-cp ~/.claude/skills/<skill>/SKILL.md .claude/skills/<skill>/SKILL.md
+scripts/sync-ai-config.sh
 ```
 
-### プロジェクトからグローバルへ
-
-プロジェクトで作成・改善したスキルを他プロジェクトでも使いたい場合。
+生成物が同期済みか確認する。
 
 ```bash
-# プロジェクトスキルをグローバルにコピー
-cp .claude/skills/<skill>/SKILL.md ~/.claude/skills/<skill>/SKILL.md
+scripts/check-ai-config.sh
 ```
 
-## CLAUDE.md の管理
+## 変更手順
 
-### 構成
+1. `.rulesync/rules/` または `.rulesync/skills/` を編集する
+2. `scripts/sync-ai-config.sh` を実行する
+3. `scripts/check-ai-config.sh` で drift がないことを確認する
+4. 差分を確認する
 
-```markdown
-# CLAUDE.md
+## 方針
 
-## スキル
+- symlink は使わない
+- `rulesync generate` を同期処理の正本にする
+- root の `AGENTS.md` と `CLAUDE.md` は dotfiles リポジトリ固有の説明として手で管理する
+- `.rulesync/rules/overview.md` から `.codex/AGENTS.md` と `.claude/CLAUDE.md` を生成する
+- `.rulesync/skills/` から `.claude/skills/`、`.codex/skills/`、`.agents/skills/` を生成する
 
-プロジェクト固有のスキルへのリンクを記載。
+## drift 検出
 
-- [スキル名](.claude/skills/<skill>/SKILL.md)
+`scripts/check-ai-config.sh` は `rulesync generate --check` を実行する。差分が出たら `.rulesync/` を正本として `scripts/sync-ai-config.sh` を実行する。
 
-## コマンド
-
-プロジェクトで使用するコマンドを記載。
-```
-
-### スキルリンクの追加
-
-新しいスキルを追加したら CLAUDE.md にリンクを追加。
-
-```markdown
-## スキル
-
-- [ライブラリ構成ガイド](.claude/skills/cli/SKILL.md)
-```
-
-## 同期コマンド
-
-### 全スキルの差分確認
+## 新しい skill を追加する場合
 
 ```bash
-# グローバルとプロジェクトのスキルを比較
-diff -r ~/.claude/skills .claude/skills 2>/dev/null | grep -v "Only in"
+mkdir -p .rulesync/skills/<skill>
+$EDITOR .rulesync/skills/<skill>/SKILL.md
+scripts/sync-ai-config.sh
 ```
-
-### 特定スキルの同期
-
-```bash
-# typescript スキルをプロジェクトからグローバルへ同期
-cp .claude/skills/typescript/SKILL.md ~/.claude/skills/typescript/SKILL.md
-```
-
-## 優先順位
-
-Claude Code は以下の順序でスキルを読み込む:
-
-1. プロジェクトスキル (`.claude/skills/`)
-2. グローバルスキル (`~/.claude/skills/`)
-
-同名のスキルがある場合、プロジェクトスキルが優先される。

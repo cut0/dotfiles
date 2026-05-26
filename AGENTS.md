@@ -6,8 +6,10 @@
 
 - `nvim/`: Neovim 設定（Lua、Neovim 0.11+、lazy.nvim、LSP）
 - `wezterm/`: WezTerm 設定
-- `.claude/`: Claude 用設定とスキル
-- `.agents/skills/`: Codex 用スキル（`.claude/skills/` を同期）
+- `.rulesync/`: Claude Code / Codex 向け rules・skills の正本
+- `.claude/`: Claude Code 用設定と Rulesync 生成物
+- `.codex/`: Codex 用設定と Rulesync 生成物
+- `.agents/skills/`: Agent Skills 互換の Rulesync 生成物
 
 ## 変更時のガイド
 
@@ -17,6 +19,7 @@
 - LSP 追加は `nvim/lsp/` に設定ファイルを作成し、`nvim/lua/lsp_setup.lua` と `nvim/lua/plugins/lsp.lua`（`ensure_installed`）も更新
 - キーマップは用途に応じて `nvim/lua/keymaps.lua` か `nvim/lua/lsp_setup.lua` を更新
 - WezTerm のキーバインド変更は `wezterm/keys.lua` を更新
+- AI rules / skills は `.rulesync/` を編集し、`scripts/sync-ai-config.sh` で生成物へ反映
 
 ## よく使うコマンド
 
@@ -25,5 +28,7 @@
 - `:Mason`（LSP 管理）
 - `brew bundle`（依存インストール）
 - `asdf install`（ランタイム導入）
+- `scripts/sync-ai-config.sh`（Rulesync 生成物を更新）
+- `scripts/check-ai-config.sh`（Rulesync 生成物の drift 検出）
 
 詳細な説明は `CLAUDE.md` を参照してください。

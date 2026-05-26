@@ -1,159 +1,9 @@
 {
-  "agentPushNotifEnabled" : true,
-  "alwaysThinkingEnabled" : true,
-  "editorMode" : "vim",
-  "enabledPlugins" : {
-    "figma@claude-plugins-official" : true,
-    "gopls-lsp@claude-plugins-official" : true,
-    "typescript-lsp@claude-plugins-official" : true
+  "env": {
+    "ENABLE_TOOL_SEARCH": "true"
   },
-  "env" : {
-    "ENABLE_TOOL_SEARCH" : "true"
-  },
-  "extraKnownMarketplaces" : {
-    "a11y-specialist-skills" : {
-      "source" : {
-        "repo" : "masuP9\/a11y-specialist-skills",
-        "source" : "github"
-      }
-    }
-  },
-  "hooks" : {
-    "Notification" : [
-      {
-        "hooks" : [
-          {
-            "command" : "afplay \/System\/Library\/Sounds\/Hero.aiff",
-            "type" : "command"
-          }
-        ],
-        "matcher" : ""
-      }
-    ],
-    "PermissionRequest" : [
-      {
-        "hooks" : [
-          {
-            "command" : "\"${CLAUDE_CONFIG_DIR:-$HOME\/.claude}\/hooks\/notchi-hook.sh\"",
-            "type" : "command"
-          }
-        ],
-        "matcher" : "*"
-      }
-    ],
-    "PostToolUse" : [
-      {
-        "hooks" : [
-          {
-            "command" : "\"${CLAUDE_CONFIG_DIR:-$HOME\/.claude}\/hooks\/notchi-hook.sh\"",
-            "type" : "command"
-          }
-        ],
-        "matcher" : "*"
-      }
-    ],
-    "PreCompact" : [
-      {
-        "hooks" : [
-          {
-            "command" : "\"${CLAUDE_CONFIG_DIR:-$HOME\/.claude}\/hooks\/notchi-hook.sh\"",
-            "type" : "command"
-          }
-        ],
-        "matcher" : "auto"
-      },
-      {
-        "hooks" : [
-          {
-            "command" : "\"${CLAUDE_CONFIG_DIR:-$HOME\/.claude}\/hooks\/notchi-hook.sh\"",
-            "type" : "command"
-          }
-        ],
-        "matcher" : "manual"
-      }
-    ],
-    "PreToolUse" : [
-      {
-        "hooks" : [
-          {
-            "command" : "afplay \/System\/Library\/Sounds\/Pop.aiff",
-            "type" : "command"
-          }
-        ],
-        "matcher" : "*"
-      },
-      {
-        "hooks" : [
-          {
-            "command" : "\"${CLAUDE_CONFIG_DIR:-$HOME\/.claude}\/hooks\/notchi-hook.sh\"",
-            "type" : "command"
-          }
-        ],
-        "matcher" : "*"
-      }
-    ],
-    "SessionEnd" : [
-      {
-        "hooks" : [
-          {
-            "command" : "\"${CLAUDE_CONFIG_DIR:-$HOME\/.claude}\/hooks\/notchi-hook.sh\"",
-            "type" : "command"
-          }
-        ]
-      }
-    ],
-    "SessionStart" : [
-      {
-        "hooks" : [
-          {
-            "command" : "\"${CLAUDE_CONFIG_DIR:-$HOME\/.claude}\/hooks\/notchi-hook.sh\"",
-            "type" : "command"
-          }
-        ]
-      }
-    ],
-    "Stop" : [
-      {
-        "hooks" : [
-          {
-            "command" : "afplay \/System\/Library\/Sounds\/Glass.aiff",
-            "type" : "command"
-          }
-        ]
-      },
-      {
-        "hooks" : [
-          {
-            "command" : "\"${CLAUDE_CONFIG_DIR:-$HOME\/.claude}\/hooks\/notchi-hook.sh\"",
-            "type" : "command"
-          }
-        ]
-      }
-    ],
-    "SubagentStop" : [
-      {
-        "hooks" : [
-          {
-            "command" : "\"${CLAUDE_CONFIG_DIR:-$HOME\/.claude}\/hooks\/notchi-hook.sh\"",
-            "type" : "command"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit" : [
-      {
-        "hooks" : [
-          {
-            "command" : "\"${CLAUDE_CONFIG_DIR:-$HOME\/.claude}\/hooks\/notchi-hook.sh\"",
-            "type" : "command"
-          }
-        ]
-      }
-    ]
-  },
-  "language" : "japanese",
-  "permissions" : {
-    "allow" : [
+  "permissions": {
+    "allow": [
       "Bash",
       "Edit",
       "Write",
@@ -169,7 +19,8 @@
       "mcp__chrome-devtools__get_network_request",
       "Bash(git push:*)"
     ],
-    "ask" : [
+    "deny": [],
+    "ask": [
       "Bash(git push origin main)",
       "Bash(git push origin main:*)",
       "Bash(git push -u origin main)",
@@ -182,23 +33,172 @@
       "Bash(git branch -D:*)",
       "Bash(rm -rf:*)"
     ],
-    "defaultMode" : "auto",
-    "deny" : [
-
+    "defaultMode": "auto"
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Hero.aiff"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/notchi-hook.sh\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/notchi-hook.sh\""
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/notchi-hook.sh\""
+          }
+        ]
+      },
+      {
+        "matcher": "manual",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/notchi-hook.sh\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Pop.aiff"
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/notchi-hook.sh\""
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/notchi-hook.sh\""
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/notchi-hook.sh\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Glass.aiff"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/notchi-hook.sh\""
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/notchi-hook.sh\""
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/notchi-hook.sh\""
+          }
+        ]
+      }
     ]
   },
-  "skipAutoPermissionPrompt" : true,
-  "skipDangerousModePermissionPrompt" : true,
-  "spinnerVerbs" : {
-    "mode" : "replace",
-    "verbs" : [
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "figma@claude-plugins-official": true,
+    "gopls-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "a11y-specialist-skills": {
+      "source": {
+        "source": "github",
+        "repo": "masuP9/a11y-specialist-skills"
+      }
+    }
+  },
+  "language": "japanese",
+  "spinnerVerbs": {
+    "mode": "replace",
+    "verbs": [
       "ろーでぃんぐ"
     ]
   },
-  "statusLine" : {
-    "command" : "bash ~\/.claude\/statusline-command.sh",
-    "type" : "command"
-  },
-  "theme" : "dark",
-  "voiceEnabled" : true
+  "alwaysThinkingEnabled": true,
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark",
+  "editorMode": "vim",
+  "verbose": false,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "voiceEnabled": true,
+  "effortLevel": "high"
 }
