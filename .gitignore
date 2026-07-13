@@ -46,6 +46,9 @@ nvim/queries/
 # Claude Code worktrees
 .claude/worktrees/
 
+# Nix build output
+/result
+
 # Mac system files
 .DS_Store
 
