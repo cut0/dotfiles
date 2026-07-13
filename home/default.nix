@@ -63,6 +63,8 @@ in
   };
 
   xdg.configFile = {
+    # hosts.yml はトークンを含むため config.yml のみ管理する
+    "gh/config.yml".source = link "gh/config.yml";
     "karabiner".source = link "karabiner";
     "nvim".source = link "nvim";
     "wezterm".source = link "wezterm";
