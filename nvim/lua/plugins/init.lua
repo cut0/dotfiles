@@ -21,6 +21,7 @@ require("lazy").setup({
     { import = "plugins.format-lint" },
     { import = "plugins.telescope" },
     { import = "plugins.glance" },
+    { import = "plugins.grug-far" },
     { import = "plugins.buffer" },
     { import = "plugins.statusline" },
     { import = "plugins.copilot" },

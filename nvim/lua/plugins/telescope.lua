@@ -71,17 +71,6 @@ return {
         desc = "Live grep with args",
       },
       {
-        "<leader>tr",
-        function()
-          local pattern = vim.g.last_grep_pattern or ""
-          local cmd = ":noautocmd cfdo %s/" .. pattern .. "//g | update"
-          -- カーソルを置換文字列の位置に（/g | update の前）
-          local left = string.rep(vim.api.nvim_replace_termcodes("<Left>", true, false, true), 11)
-          vim.api.nvim_feedkeys(cmd .. left, "n", false)
-        end,
-        desc = "Replace in quickfix",
-      },
-      {
         "<leader>tp",
         function()
           require("telescope.builtin").find_files({
@@ -331,16 +320,6 @@ return {
             i = {
               ["<C-j>"] = actions.move_selection_next,
               ["<C-k>"] = actions.move_selection_previous,
-              ["<C-q>"] = function(prompt_bufnr)
-                local action_state = require("telescope.actions.state")
-                local picker = action_state.get_current_picker(prompt_bufnr)
-                local prompt = picker:_get_prompt()
-                -- live_grep_args: '"pattern" --glob ...' → pattern を抽出
-                local pattern = prompt:match('^"([^"]*)"') or prompt:match("^([^%s]+)") or prompt
-                vim.g.last_grep_pattern = pattern
-                actions.send_to_qflist(prompt_bufnr)
-                actions.open_qflist(prompt_bufnr)
-              end,
             },
           },
           file_ignore_patterns = exclude_patterns,
