@@ -38,6 +38,32 @@ local function pop_closed_buffer()
   return nil
 end
 
+--------------------------------------------------------------------------------
+-- ペインを閉じたら表示中のバッファも閉じる (:q / <C-w>c 対応)
+--------------------------------------------------------------------------------
+
+vim.api.nvim_create_autocmd("WinClosed", {
+  group = vim.api.nvim_create_augroup("CloseBufferWithWindow", { clear = true }),
+  callback = function(args)
+    local buf = args.buf
+    vim.schedule(function()
+      if not vim.api.nvim_buf_is_valid(buf) then
+        return
+      end
+      -- 通常のファイルバッファ以外（ファイラ・picker 等）は対象外
+      if not vim.bo[buf].buflisted or vim.bo[buf].buftype ~= "" then
+        return
+      end
+      -- 他のペインで表示中、または未保存の変更がある場合は消さない
+      if #vim.fn.win_findbuf(buf) > 0 or vim.bo[buf].modified then
+        return
+      end
+      push_closed_buffer(vim.api.nvim_buf_get_name(buf))
+      pcall(vim.api.nvim_buf_delete, buf, {})
+    end)
+  end,
+})
+
 return {
   {
     "echasnovski/mini.bufremove",
