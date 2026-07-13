@@ -53,6 +53,11 @@ autoload -Uz compinit && compinit
 eval "$(starship init zsh)"
 
 # ====================
+# エイリアス
+# ====================
+alias drs='sudo darwin-rebuild switch --flake ~/repos/space_private/dotfiles#mac --impure'
+
+# ====================
 # ツール・プラグイン
 # ====================
 source <(fzf --zsh)
