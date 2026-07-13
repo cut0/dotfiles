@@ -306,9 +306,11 @@ return {
           },
           live_grep = {
             additional_args = { "--hidden" },
+            only_sort_text = true, -- ファイル名を照合対象にせず行テキストのみマッチさせる
           },
           grep_string = {
             additional_args = { "--hidden" },
+            only_sort_text = true,
           },
           lsp_references = { show_line = false },
           lsp_definitions = { show_line = false },
