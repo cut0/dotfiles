@@ -96,7 +96,10 @@ return {
               vim.schedule(function()
                 local picker = require("telescope.actions.state").get_current_picker(prompt_bufnr)
                 if picker and picker.results_win and vim.api.nvim_win_is_valid(picker.results_win) then
-                  vim.wo[picker.results_win].winhighlight = "TelescopeMatching:TelescopeMatchingActive"
+                  -- 上書きすると telescope の背景設定が消えるため既存の winhighlight に追記する
+                  local winhl = vim.wo[picker.results_win].winhighlight
+                  vim.wo[picker.results_win].winhighlight = (winhl ~= "" and winhl .. "," or "")
+                    .. "TelescopeMatching:TelescopeMatchingActive"
                 end
               end)
               return true
