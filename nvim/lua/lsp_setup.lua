@@ -35,26 +35,26 @@ local function setup_lsp_keymaps(bufnr)
         return
       end
 
-      -- 現在ファイルの参照を先頭に、他ファイルはファイルごとにまとめる
-      local current_refs = {}
-      local other_refs = {}
+      -- 現在ファイルの参照は除外し、他ファイルをファイルごとにまとめる
+      local entries = {}
       for _, ref in ipairs(result) do
         local uri = ref.uri or ref.targetUri
         if uri then
           local filepath = vim.uri_to_fname(uri)
-          local item = {
-            filepath = filepath,
-            lnum = ref.range.start.line + 1,
-            col = ref.range.start.character + 1,
-            is_current = filepath == current_file,
-          }
-          table.insert(item.is_current and current_refs or other_refs, item)
+          if filepath ~= current_file then
+            table.insert(entries, {
+              filepath = filepath,
+              lnum = ref.range.start.line + 1,
+              col = ref.range.start.character + 1,
+            })
+          end
         end
       end
-      table.sort(current_refs, function(a, b)
-        return a.lnum < b.lnum
-      end)
-      table.sort(other_refs, function(a, b)
+      if vim.tbl_isempty(entries) then
+        vim.notify("No references found", vim.log.levels.INFO)
+        return
+      end
+      table.sort(entries, function(a, b)
         if a.filepath == b.filepath then
           return a.lnum < b.lnum
         end
@@ -62,7 +62,6 @@ local function setup_lsp_keymaps(bufnr)
       end)
 
       -- 同一ファイルの 2 件目以降はファイル名を省略して表示する
-      local entries = vim.list_extend(current_refs, other_refs)
       local last_filepath
       for _, entry in ipairs(entries) do
         entry.show_path = entry.filepath ~= last_filepath
@@ -80,12 +79,9 @@ local function setup_lsp_keymaps(bufnr)
       })
 
       local make_display = function(entry)
-        -- 同一ファイル内は別の色で表示
-        local hl = entry.value.is_current and "TelescopeResultsComment" or nil
-
         -- 同一ファイルの 2 件目以降はファイル名を省略し、常に「ファイル名:行数」のみ表示する
         if not entry.value.show_path then
-          return displayer({ { " └ :" .. entry.value.lnum, hl } })
+          return displayer({ { " └ :" .. entry.value.lnum } })
         end
 
         local filepath = entry.value.filepath
@@ -93,7 +89,7 @@ local function setup_lsp_keymaps(bufnr)
         if filepath:sub(1, #root) == root then
           filepath = filepath:sub(#root + 2)
         end
-        return displayer({ { filepath .. ":" .. entry.value.lnum, hl } })
+        return displayer({ { filepath .. ":" .. entry.value.lnum } })
       end
 
       -- オレンジ背景のハイライトグループを定義
