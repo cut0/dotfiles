@@ -35,27 +35,38 @@ local function setup_lsp_keymaps(bufnr)
         return
       end
 
-      -- 同一ファイルは全参照、他ファイルは重複除去
-      local seen_files = {}
-      local entries = {}
+      -- 現在ファイルの参照を先頭に、他ファイルはファイルごとにまとめる
+      local current_refs = {}
+      local other_refs = {}
       for _, ref in ipairs(result) do
         local uri = ref.uri or ref.targetUri
         if uri then
           local filepath = vim.uri_to_fname(uri)
-          local is_current = filepath == current_file
-
-          if is_current or not seen_files[uri] then
-            if not is_current then
-              seen_files[uri] = true
-            end
-            table.insert(entries, {
-              filepath = filepath,
-              lnum = ref.range.start.line + 1,
-              col = ref.range.start.character + 1,
-              is_current = is_current,
-            })
-          end
+          local item = {
+            filepath = filepath,
+            lnum = ref.range.start.line + 1,
+            col = ref.range.start.character + 1,
+            is_current = filepath == current_file,
+          }
+          table.insert(item.is_current and current_refs or other_refs, item)
         end
+      end
+      table.sort(current_refs, function(a, b)
+        return a.lnum < b.lnum
+      end)
+      table.sort(other_refs, function(a, b)
+        if a.filepath == b.filepath then
+          return a.lnum < b.lnum
+        end
+        return a.filepath < b.filepath
+      end)
+
+      -- 同一ファイルの 2 件目以降はファイル名を省略して表示する
+      local entries = vim.list_extend(current_refs, other_refs)
+      local last_filepath
+      for _, entry in ipairs(entries) do
+        entry.show_path = entry.filepath ~= last_filepath
+        last_filepath = entry.filepath
       end
 
       -- プロジェクトルートを取得
@@ -69,20 +80,20 @@ local function setup_lsp_keymaps(bufnr)
       })
 
       local make_display = function(entry)
+        -- 同一ファイル内は別の色で表示
+        local hl = entry.value.is_current and "TelescopeResultsComment" or nil
+
+        -- 同一ファイルの 2 件目以降はファイル名を省略し、常に「ファイル名:行数」のみ表示する
+        if not entry.value.show_path then
+          return displayer({ { " └ :" .. entry.value.lnum, hl } })
+        end
+
         local filepath = entry.value.filepath
         -- プロジェクトルートからの相対パスに変換
         if filepath:sub(1, #root) == root then
           filepath = filepath:sub(#root + 2)
         end
-
-        local display_text = filepath
-        if entry.value.is_current then
-          display_text = filepath .. ":" .. entry.value.lnum
-        end
-
-        -- 同一ファイル内は別の色で表示
-        local hl = entry.value.is_current and "TelescopeResultsComment" or nil
-        return displayer({ { display_text, hl } })
+        return displayer({ { filepath .. ":" .. entry.value.lnum, hl } })
       end
 
       -- オレンジ背景のハイライトグループを定義

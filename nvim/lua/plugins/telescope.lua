@@ -1,3 +1,24 @@
+-- grep 系の結果を「ファイル名:行数」のみで表示する entry maker
+-- 同一ファイルが連続する場合、2 件目以降はファイル名を省略する
+local function grep_entry_maker()
+  local base = require("telescope.make_entry").gen_from_vimgrep({})
+  local last_filename
+  return function(line)
+    local entry = base(line)
+    if entry then
+      local abbrev = entry.filename == last_filename
+      last_filename = entry.filename
+      entry.display = function(e)
+        if abbrev then
+          return " └ :" .. e.lnum
+        end
+        return vim.fn.fnamemodify(e.filename, ":~:.") .. ":" .. e.lnum
+      end
+    end
+    return entry
+  end
+end
+
 return {
   {
     "nvim-telescope/telescope.nvim",
@@ -29,6 +50,7 @@ return {
 
           require("telescope").extensions.live_grep_args.live_grep_args({
             default_text = vim.g.last_grep_args_input or '"" --glob ""',
+            entry_maker = grep_entry_maker(),
             attach_mappings = function(prompt_bufnr, map)
               map("i", "<Esc>", function()
                 save_input(prompt_bufnr)
@@ -82,6 +104,7 @@ return {
 
           require("telescope.builtin").live_grep({
             default_text = vim.g.last_live_grep_input or "",
+            entry_maker = grep_entry_maker(),
             attach_mappings = function(prompt_bufnr, map)
               map("i", "<Esc>", function()
                 save_input(prompt_bufnr)
