@@ -350,6 +350,13 @@ return {
         },
       })
 
+      -- Results 内のマッチ文字ハイライト（オレンジ表示）を全 picker で無効化
+      local disable_matching_hl = function()
+        vim.api.nvim_set_hl(0, "TelescopeMatching", {})
+      end
+      disable_matching_hl()
+      vim.api.nvim_create_autocmd("ColorScheme", { callback = disable_matching_hl })
+
       pcall(telescope.load_extension, "fzf")
       pcall(telescope.load_extension, "live_grep_args")
     end,
