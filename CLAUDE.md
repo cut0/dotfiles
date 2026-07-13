@@ -99,24 +99,21 @@ scripts/sync-ai-config.sh
 scripts/check-ai-config.sh
 ```
 
-### 依存関係のインストール
+### パッケージと symlink の管理（Nix）
+
+パッケージと設定ファイルの symlink は nix-darwin + home-manager で管理している。
 
 ```bash
-# Homebrew パッケージのインストール
-brew bundle
-
-# asdf でのランタイムバージョン管理
-asdf install
+# 構成変更（パッケージ・symlink の追加等）を反映
+sudo darwin-rebuild switch --flake ~/repos/space_private/dotfiles#mac --impure
 ```
 
-### 設定ファイルのリンク
-
-```bash
-ln -s ~/repos/private/dotfiles/.zshrc ~/.zshrc
-ln -s ~/repos/private/dotfiles/nvim ~/.config/nvim
-ln -s ~/repos/private/dotfiles/wezterm ~/.config/wezterm
-ln -s ~/repos/private/dotfiles/lazygit/config.yml ~/.config/lazygit/config.yml
-```
+- CLI ツールの追加: `home/default.nix` の `home.packages` に追記
+- symlink の追加: `home/default.nix` の `home.file` / `xdg.configFile` に追記（mkOutOfStoreSymlink を使う）
+- GUI アプリ・フォント: `darwin/default.nix` の `homebrew.casks` に追記
+- 設定ファイルの内容編集だけなら rebuild 不要（out-of-store symlink のため即反映）
+- ユーザー名・ホスト名はリポジトリに含めない方針。そのため `--impure`（ユーザー名を環境変数から取得）と attr 名 `#mac` の明示指定が必須
+- 依存の更新は `nix flake update` → switch（flake.lock で SHA 固定）
 
 ## アーキテクチャと設計方針
 
