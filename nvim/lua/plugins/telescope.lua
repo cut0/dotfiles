@@ -89,7 +89,7 @@ return {
             -- （スペース区切りで AND、^ $ ! などの fzf 記法は使用可）
             sorter = require("telescope").extensions.fzf.native_fzf_sorter({
               fuzzy = false,
-              case_mode = "smart_case",
+              case_mode = "ignore_case",
             }),
             attach_mappings = function(prompt_bufnr)
               -- この picker だけマッチ文字のオレンジ表示を有効化する
@@ -367,7 +367,7 @@ return {
             fuzzy = true,
             override_generic_sorter = true,
             override_file_sorter = true,
-            case_mode = "smart_case",
+            case_mode = "ignore_case",
           },
         },
       })
