@@ -52,6 +52,9 @@ nvim/queries/
 # Karabiner が自動生成するバックアップ
 /karabiner/automatic_backups/
 
+# Codex CLI が自動配置するシステムスキル
+.codex/skills/.system/
+
 # Mac system files
 .DS_Store
 
