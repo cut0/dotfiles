@@ -83,7 +83,20 @@ return {
       },
       {
         "<leader>tp",
-        function() require("telescope.builtin").find_files() end,
+        function()
+          require("telescope.builtin").find_files({
+            attach_mappings = function(prompt_bufnr)
+              -- この picker だけマッチ文字のオレンジ表示を有効化する
+              vim.schedule(function()
+                local picker = require("telescope.actions.state").get_current_picker(prompt_bufnr)
+                if picker and picker.results_win and vim.api.nvim_win_is_valid(picker.results_win) then
+                  vim.wo[picker.results_win].winhighlight = "TelescopeMatching:TelescopeMatchingActive"
+                end
+              end)
+              return true
+            end,
+          })
+        end,
         desc = "Find files",
       },
       {
@@ -350,12 +363,14 @@ return {
         },
       })
 
-      -- Results 内のマッチ文字ハイライト（オレンジ表示）を全 picker で無効化
-      local disable_matching_hl = function()
+      -- Results 内のマッチ文字ハイライト（オレンジ表示）は既定で無効化する。
+      -- 有効にしたい picker では winhighlight で TelescopeMatchingActive に差し替える
+      local setup_matching_hl = function()
         vim.api.nvim_set_hl(0, "TelescopeMatching", {})
+        vim.api.nvim_set_hl(0, "TelescopeMatchingActive", { fg = "#fe8019" })
       end
-      disable_matching_hl()
-      vim.api.nvim_create_autocmd("ColorScheme", { callback = disable_matching_hl })
+      setup_matching_hl()
+      vim.api.nvim_create_autocmd("ColorScheme", { callback = setup_matching_hl })
 
       pcall(telescope.load_extension, "fzf")
       pcall(telescope.load_extension, "live_grep_args")
