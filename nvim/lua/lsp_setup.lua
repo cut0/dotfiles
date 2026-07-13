@@ -1,5 +1,4 @@
 local M = {}
-local utils = require("utils")
 
 --------------------------------------------------------------------------------
 -- LSP Keymaps (buffer-local)
@@ -13,35 +12,11 @@ local function setup_lsp_keymaps(bufnr)
   local keymap = vim.keymap.set
   local telescope = require("telescope.builtin")
 
-  -- ターゲットウィンドウに開くカスタムアクション（別ファイルの場合のみ）
-  local function make_lsp_picker_with_target_window(picker_fn, picker_opts)
-    return function()
-      local actions = require("telescope.actions")
-      local action_state = require("telescope.actions.state")
-      local current_file = vim.api.nvim_buf_get_name(0)
-
-      picker_fn(vim.tbl_extend("force", picker_opts or {}, {
-        attach_mappings = function(prompt_bufnr, _)
-          actions.select_default:replace(function()
-            local entry = action_state.get_selected_entry()
-            actions.close(prompt_bufnr)
-            if entry.filename ~= current_file then
-              utils.open_in_target_window(entry.filename, entry.lnum, entry.col)
-            else
-              vim.api.nvim_win_set_cursor(0, { entry.lnum, entry.col - 1 })
-            end
-          end)
-          return true
-        end,
-      }))
-    end
-  end
-
-  -- 定義・参照ジャンプ
-  keymap("n", "<leader>i", make_lsp_picker_with_target_window(telescope.lsp_implementations, { jump_type = "never" }), opts("Go to implementation"))
-  keymap("n", "<leader><CR>", make_lsp_picker_with_target_window(telescope.lsp_definitions, { jump_type = "never" }), opts("Go to definition"))
+  -- 定義・参照ジャンプ（glance.nvim）
+  keymap("n", "<leader>i", "<cmd>Glance implementations<cr>", opts("Go to implementation"))
+  keymap("n", "<leader><CR>", "<cmd>Glance definitions<cr>", opts("Go to definition"))
   keymap("n", "<leader><S-CR>", "<cmd>Glance references<cr>", opts("Show references (Glance)"))
-  keymap("n", "<leader><A-CR>", make_lsp_picker_with_target_window(telescope.lsp_type_definitions, { jump_type = "never" }), opts("Go to type definition"))
+  keymap("n", "<leader><A-CR>", "<cmd>Glance type_definitions<cr>", opts("Go to type definition"))
 
   -- リネーム
   keymap("n", "<leader>rn", vim.lsp.buf.rename, opts("Rename symbol"))
