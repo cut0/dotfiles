@@ -25,6 +25,9 @@ export EDITOR=nvim
 # PATH
 # ====================
 path=(
+  /etc/profiles/per-user/$USER/bin
+  /run/current-system/sw/bin
+  /nix/var/nix/profiles/default/bin
   /opt/homebrew/bin
   /opt/homebrew/share/google-cloud-sdk/bin
   $GOPATH/bin
@@ -52,18 +55,17 @@ eval "$(starship init zsh)"
 # ====================
 # ツール・プラグイン
 # ====================
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source <(fzf --zsh)
 export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
 export FZF_DEFAULT_OPTS='--height 40% --reverse --border'
 
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /etc/profiles/per-user/$USER/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /etc/profiles/per-user/$USER/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 eval "$(mise activate zsh)"
 
 export PATH="$HOME/.local/bin:$PATH"
 eval "$(direnv hook zsh)"
-export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
 # pnpm

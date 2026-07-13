@@ -1,4 +1,9 @@
-{ config, ... }:
+{
+  config,
+  pkgs,
+  pkgsUnstable,
+  ...
+}:
 
 let
   dotfiles = "${config.home.homeDirectory}/repos/space_private/dotfiles";
@@ -7,6 +12,31 @@ let
 in
 {
   home.stateVersion = "25.11";
+
+  # CLI ツール（旧 Brewfile の brew 相当）
+  home.packages = with pkgs; [
+    actionlint
+    direnv
+    fastly
+    fd
+    ffmpeg
+    fzf
+    gh
+    go-task
+    google-cloud-sql-proxy
+    jujutsu
+    lazygit
+    libimobiledevice
+    mise
+    pkgsUnstable.neovim # 0.12 系を使うため unstable から取得
+    ripgrep
+    sox
+    starship
+    tmux
+    tree-sitter
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+  ];
 
   home.file = {
     ".zshrc".source = link ".zshrc";

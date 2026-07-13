@@ -3,6 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-25.11-darwin";
+    # 一部パッケージ（neovim 等）を新しいバージョンで使うための unstable
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin = {
       url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -17,6 +19,7 @@
     {
       self,
       nixpkgs,
+      nixpkgs-unstable,
       nix-darwin,
       home-manager,
     }:
@@ -40,6 +43,9 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = {
+              pkgsUnstable = import nixpkgs-unstable { system = "aarch64-darwin"; };
+            };
             home-manager.backupFileExtension = "before-home-manager";
             home-manager.users.${username} = import ./home;
           }
