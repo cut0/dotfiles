@@ -20,6 +20,7 @@ require("lazy").setup({
     { import = "plugins.completion" },
     { import = "plugins.format-lint" },
     { import = "plugins.telescope" },
+    { import = "plugins.glance" },
     { import = "plugins.buffer" },
     { import = "plugins.statusline" },
     { import = "plugins.copilot" },
