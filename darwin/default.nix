@@ -13,8 +13,31 @@
   # 対象外: MDM 配布物（Cisco / Falcon / FortiClient / Cloudflare WARP / Self Service+ / zoom）、
   # cask 未収録の手動インストール品（CuaDriver / Pencil / Raycast Beta / WinTicket TV Viewer / Python 3.13）
   # ※ zoom は cask の pkg インストーラが既存インストールと衝突して失敗するため対象外
+  # macOS のシステム設定（defaults）。switch のたびにこの値へ揃えられる
+  system.defaults = {
+    dock = {
+      autohide = true;
+      tilesize = 38;
+      orientation = "left";
+      show-recents = false;
+    };
+
+    finder = {
+      FXPreferredViewStyle = "Nlsv"; # リスト表示
+    };
+
+    NSGlobalDomain = {
+      KeyRepeat = 2; # キーリピート速度（最速）
+      InitialKeyRepeat = 15; # リピート開始までの時間
+      AppleInterfaceStyle = "Dark"; # ダークモード
+      "com.apple.trackpad.scaling" = 3.0; # トラックパッドの軌跡の速さ
+    };
+  };
+
   homebrew = {
     enable = true;
+    # 宣言リストにない Homebrew 管理物は switch 時にアンインストールする（完全宣言型）
+    onActivation.cleanup = "zap";
     brews = [
       "libpq" # psql 等のクライアント一式（.zshrc が /opt/homebrew/opt/libpq/bin を参照）
       "mas" # masApps の管理に必要
