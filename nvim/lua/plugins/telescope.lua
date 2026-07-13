@@ -85,6 +85,12 @@ return {
         "<leader>tp",
         function()
           require("telescope.builtin").find_files({
+            -- 散らばった文字でもマッチする fuzzy をやめ、部分文字列の完全一致にする
+            -- （スペース区切りで AND、^ $ ! などの fzf 記法は使用可）
+            sorter = require("telescope").extensions.fzf.native_fzf_sorter({
+              fuzzy = false,
+              case_mode = "smart_case",
+            }),
             attach_mappings = function(prompt_bufnr)
               -- この picker だけマッチ文字のオレンジ表示を有効化する
               vim.schedule(function()
