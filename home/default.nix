@@ -63,6 +63,7 @@ in
   };
 
   xdg.configFile = {
+    "karabiner".source = link "karabiner";
     "nvim".source = link "nvim";
     "wezterm".source = link "wezterm";
     "starship.toml".source = link "starship.toml";

@@ -49,6 +49,9 @@ nvim/queries/
 # Nix build output
 /result
 
+# Karabiner が自動生成するバックアップ
+/karabiner/automatic_backups/
+
 # Mac system files
 .DS_Store
 
